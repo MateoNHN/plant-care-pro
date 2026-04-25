@@ -173,7 +173,12 @@ tbody td:first-child{font-weight:600;color:var(--text-dark)}
 .plant-dot:hover{transform:scale(1.35)}
 .map-tooltip{position:fixed;background:var(--moss);color:#fff;font-size:12px;font-weight:600;
   padding:5px 11px;border-radius:8px;pointer-events:none;display:none;z-index:9999;
-  font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow:var(--shadow-md)}
+  font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow:var(--shadow-md);
+  will-change:transform;transition:opacity .1s ease}
+/* Fix SVG cursor inheritance glitch - floor plan area uses default cursor except on dots */
+#floor-svg{cursor:default}
+#floor-svg text{pointer-events:none}
+#floor-svg rect{pointer-events:none}
 
 /* OVERLAY & MODAL */
 .overlay{position:fixed;inset:0;background:rgba(20,35,22,.48);backdrop-filter:blur(5px);
@@ -317,7 +322,7 @@ tbody td:first-child{font-weight:600;color:var(--text-dark)}
   <div class="header-right">
     <div class="search-wrap">
       <span class="material-icons-outlined s-icon">search</span>
-      <input type="search" placeholder="Search plants…" oninput="filterPlants(this.value)"/>
+      <input type="search" placeholder="Search plants…" oninput="debouncedFilter(this.value)"/>
     </div>
     <button class="icon-btn" title="Notifications" onclick="openModal('modal-notifs')">
       <span class="material-icons-outlined">notifications</span>
@@ -537,8 +542,24 @@ tbody td:first-child{font-weight:600;color:var(--text-dark)}
       <textarea id="add-notes" placeholder="Any special care tips…"></textarea>
     </div>
     <div class="form-group">
-      <label>Photo URL (optional)</label>
-      <input type="url" id="add-photo" placeholder="https://…"/>
+      <label>Plant Photo</label>
+      <div id="add-photo-preview" style="width:100%;height:110px;border-radius:10px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+        border:1.5px dashed var(--sage-light);transition:border-color .2s;position:relative;overflow:hidden;margin-bottom:8px"
+        onclick="document.getElementById('add-photo-file').click()">
+        <span class="material-icons-outlined" id="add-photo-icon" style="font-size:32px;color:rgba(122,158,126,.5)">add_a_photo</span>
+        <span id="add-photo-label" style="font-size:12px;font-weight:600;color:var(--text-light)">Click to upload a photo</span>
+        <div id="add-photo-img" style="position:absolute;inset:0;background-size:cover;background-position:center;display:none"></div>
+        <div id="add-photo-overlay" style="position:absolute;inset:0;background:rgba(30,46,32,.5);display:none;align-items:center;justify-content:center">
+          <span class="material-icons-outlined" style="color:#fff;font-size:28px">photo_camera</span>
+        </div>
+      </div>
+      <input type="file" id="add-photo-file" accept="image/*" style="display:none" onchange="handleAddPhotoFile(event)"/>
+      <input type="url" id="add-photo-url" placeholder="…or paste a photo URL" style="width:100%;border:1.5px solid var(--sage-light);
+        background:var(--white);border-radius:10px;padding:8px 13px;font-family:'DM Sans',sans-serif;
+        font-size:13px;color:var(--text-dark);outline:none;transition:border-color .2s"
+        oninput="handleAddPhotoUrl(this.value)"/>
+      <input type="hidden" id="add-photo"/>
     </div>
     <div class="btn-group">
       <button class="btn-secondary" onclick="closeModal('modal-add')">Cancel</button>
@@ -584,8 +605,24 @@ tbody td:first-child{font-weight:600;color:var(--text-dark)}
       <textarea id="edit-notes"></textarea>
     </div>
     <div class="form-group">
-      <label>Photo URL</label>
-      <input type="url" id="edit-photo"/>
+      <label>Plant Photo</label>
+      <div id="edit-photo-preview" style="width:100%;height:100px;border-radius:10px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;
+        border:1.5px dashed var(--sage-light);position:relative;overflow:hidden;margin-bottom:8px"
+        onclick="document.getElementById('edit-photo-file').click()">
+        <span class="material-icons-outlined" id="edit-photo-icon" style="font-size:28px;color:rgba(122,158,126,.5)">add_a_photo</span>
+        <span id="edit-photo-label" style="font-size:12px;font-weight:600;color:var(--text-light)">Click to change photo</span>
+        <div id="edit-photo-img" style="position:absolute;inset:0;background-size:cover;background-position:center;display:none"></div>
+        <div id="edit-photo-overlay" style="position:absolute;inset:0;background:rgba(30,46,32,.5);display:none;align-items:center;justify-content:center">
+          <span class="material-icons-outlined" style="color:#fff;font-size:26px">photo_camera</span>
+        </div>
+      </div>
+      <input type="file" id="edit-photo-file" accept="image/*" style="display:none" onchange="handleEditPhotoFile(event)"/>
+      <input type="url" id="edit-photo-url" placeholder="…or paste a photo URL"
+        style="width:100%;border:1.5px solid var(--sage-light);background:var(--white);border-radius:10px;
+        padding:8px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dark);outline:none;
+        transition:border-color .2s" oninput="handleEditPhotoUrl(this.value)"/>
+      <input type="hidden" id="edit-photo"/>
     </div>
     <div class="btn-group">
       <button class="btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
@@ -766,18 +803,23 @@ function updateStats(){
 }
 
 // ── PLANT CARDS ─────────────────────────────────────────
+let _isFiltering = false;
 function renderCards(filter=''){
+  _isFiltering = filter.length > 0;
   const grid=document.getElementById('plant-grid');
   grid.innerHTML='';
+  const q = filter.toLowerCase();
   const visible=plants.filter(p=>
-    p.name.toLowerCase().includes(filter.toLowerCase())||
-    p.location.toLowerCase().includes(filter.toLowerCase())||
-    (p.species||'').toLowerCase().includes(filter.toLowerCase())
+    p.name.toLowerCase().includes(q)||
+    p.location.toLowerCase().includes(q)||
+    (p.species||'').toLowerCase().includes(q)
   );
   visible.forEach((p,i)=>{
     const card=document.createElement('div');
     card.className='plant-card';
-    card.style.animationDelay=(i*.07)+'s';
+    // No animation delay during search - prevents the flash
+    card.style.animationDelay = _isFiltering ? '0s' : (i*.07)+'s';
+    card.style.animation = _isFiltering ? 'none' : '';
     const img=p.photo
       ?`<div class="plant-card-img" style="background-image:url('${p.photo}')"></div>`
       :`<div class="plant-card-placeholder"><span class="material-icons-outlined">local_florist</span></div>`;
@@ -946,10 +988,11 @@ function addPlant(){
     log:[{icon:'local_florist',text:'Added to collection',date:'Today'}]
   });
   closeModal('modal-add');
-  ['add-name','add-species','add-photo','add-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['add-name','add-species','add-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('add-location').value='';
   document.getElementById('add-water-days').value=7;
   document.getElementById('add-fert-weeks').value=4;
+  resetAddPhotoUI();
   renderAll();
   showToast(`🌱 ${name} added to your oasis!`,'add');
 }
@@ -1042,6 +1085,8 @@ function openEditModal(id){
   document.getElementById('edit-water-days').value=p.waterDays;
   document.getElementById('edit-notes').value=p.notes||'';
   document.getElementById('edit-photo').value=p.photo||'';
+  document.getElementById('edit-photo-file').value='';
+  populateEditPhotoUI(p.photo||'');
   closeModal('modal-detail');
   openModal('modal-edit');
 }
@@ -1156,23 +1201,198 @@ function populateTasksModal(){
     </div>`).join('');
 }
 
-// ── SEARCH ───────────────────────────────────────────────
+// ── SEARCH (debounced to prevent flash) ─────────────────
+let _searchTimer = null;
+function debouncedFilter(q){
+  // If query already matches current visible results — update immediately, no delay
+  clearTimeout(_searchTimer);
+  const lq = q.toLowerCase();
+  const wouldMatch = plants.filter(p=>
+    p.name.toLowerCase().includes(lq)||
+    p.location.toLowerCase().includes(lq)||
+    (p.species||'').toLowerCase().includes(lq)
+  );
+  // Render immediately if query is empty or if it's a narrowing filter
+  // (fewer or equal results than current) — no perceived flash
+  _searchTimer = setTimeout(()=>{ renderCards(q); }, q.length===0 ? 0 : 80);
+}
 function filterPlants(q){ renderCards(q); }
 
-// ── WEATHER (simulated for Taipei) ───────────────────────
+// ── PHOTO UPLOAD HANDLERS (Fix 2) ───────────────────────
+function handleAddPhotoFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    document.getElementById('add-photo').value = data;
+    document.getElementById('add-photo-url').value = '';
+    const img = document.getElementById('add-photo-img');
+    img.style.backgroundImage = `url('${data}')`;
+    img.style.display = 'block';
+    document.getElementById('add-photo-icon').style.display = 'none';
+    document.getElementById('add-photo-label').style.display = 'none';
+    const ov = document.getElementById('add-photo-overlay');
+    ov.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+function handleAddPhotoUrl(url){
+  document.getElementById('add-photo').value = url;
+  const img = document.getElementById('add-photo-img');
+  if(url){
+    img.style.backgroundImage = `url('${url}')`;
+    img.style.display = 'block';
+    document.getElementById('add-photo-icon').style.display = 'none';
+    document.getElementById('add-photo-label').style.display = 'none';
+    document.getElementById('add-photo-overlay').style.display = 'flex';
+  } else {
+    img.style.display = 'none';
+    document.getElementById('add-photo-icon').style.display = '';
+    document.getElementById('add-photo-label').style.display = '';
+    document.getElementById('add-photo-overlay').style.display = 'none';
+  }
+}
+function resetAddPhotoUI(){
+  document.getElementById('add-photo').value = '';
+  document.getElementById('add-photo-url').value = '';
+  document.getElementById('add-photo-file').value = '';
+  document.getElementById('add-photo-img').style.display = 'none';
+  document.getElementById('add-photo-icon').style.display = '';
+  document.getElementById('add-photo-label').style.display = '';
+  document.getElementById('add-photo-overlay').style.display = 'none';
+}
+function handleEditPhotoFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    document.getElementById('edit-photo').value = data;
+    document.getElementById('edit-photo-url').value = '';
+    const img = document.getElementById('edit-photo-img');
+    img.style.backgroundImage = `url('${data}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+function handleEditPhotoUrl(url){
+  document.getElementById('edit-photo').value = url;
+  const img = document.getElementById('edit-photo-img');
+  if(url){
+    img.style.backgroundImage = `url('${url}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+  } else {
+    img.style.display = 'none';
+    document.getElementById('edit-photo-icon').style.display = '';
+    document.getElementById('edit-photo-label').style.display = '';
+    document.getElementById('edit-photo-overlay').style.display = 'none';
+  }
+}
+function populateEditPhotoUI(photoVal){
+  const img = document.getElementById('edit-photo-img');
+  if(photoVal){
+    img.style.backgroundImage = `url('${photoVal}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+    // Show URL only if it looks like a URL (not base64)
+    document.getElementById('edit-photo-url').value = photoVal.startsWith('data:') ? '' : photoVal;
+  } else {
+    img.style.display = 'none';
+    document.getElementById('edit-photo-icon').style.display = '';
+    document.getElementById('edit-photo-label').style.display = '';
+    document.getElementById('edit-photo-overlay').style.display = 'none';
+    document.getElementById('edit-photo-url').value = '';
+  }
+}
+
+// ── WEATHER — GPS + Open-Meteo (Fix 4) ──────────────────
+const WMO_CODES = {
+  0:{icon:'☀️',desc:'Clear sky'},1:{icon:'🌤️',desc:'Mainly clear'},
+  2:{icon:'⛅',desc:'Partly cloudy'},3:{icon:'☁️',desc:'Overcast'},
+  45:{icon:'🌫️',desc:'Foggy'},48:{icon:'🌫️',desc:'Icy fog'},
+  51:{icon:'🌦️',desc:'Light drizzle'},53:{icon:'🌦️',desc:'Drizzle'},
+  55:{icon:'🌧️',desc:'Heavy drizzle'},61:{icon:'🌧️',desc:'Light rain'},
+  63:{icon:'🌧️',desc:'Rain'},65:{icon:'🌧️',desc:'Heavy rain'},
+  71:{icon:'🌨️',desc:'Light snow'},73:{icon:'🌨️',desc:'Snow'},
+  75:{icon:'❄️',desc:'Heavy snow'},80:{icon:'🌦️',desc:'Rain showers'},
+  81:{icon:'🌧️',desc:'Heavy showers'},95:{icon:'⛈️',desc:'Thunderstorm'},
+  99:{icon:'⛈️',desc:'Heavy thunderstorm'}
+};
+
+function plantTipFromWeather(code, temp){
+  if(code===0||code===1) return temp>28?'Hot & sunny — check soil moisture twice today!':'Great day to move sun-lovers near the window!';
+  if(code===2||code===3) return 'Overcast today — low-light plants will love this.';
+  if(code>=51&&code<=65||code>=80&&code<=82) return 'Rainy day — hold off on watering, humidity is high!';
+  if(code>=71&&code<=75) return 'Cold & snowy — keep tropical plants away from windows.';
+  if(code>=95) return 'Stormy outside — a good day to mist your indoor plants.';
+  return 'Good conditions for your indoor plants today!';
+}
+
+function setWeatherFallback(){
+  document.getElementById('w-icon').textContent='🌿';
+  document.getElementById('w-temp').textContent='--°C';
+  document.getElementById('w-desc').textContent='Weather unavailable';
+  document.getElementById('w-tip').textContent='Enable location access for live weather tips.';
+}
+
+async function fetchWeather(lat, lon, cityName){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&temperature_unit=celsius&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const temp = Math.round(data.current.temperature_2m);
+    const code = data.current.weathercode;
+    const wmo = WMO_CODES[code] || {icon:'🌡️',desc:'Unknown'};
+    document.getElementById('w-icon').textContent = wmo.icon;
+    document.getElementById('w-temp').textContent = `${temp}°C`;
+    document.getElementById('w-desc').textContent = `${wmo.desc} · ${cityName}`;
+    document.getElementById('w-tip').textContent = plantTipFromWeather(code, temp);
+  } catch(err){
+    setWeatherFallback();
+  }
+}
+
+async function reverseGeocode(lat, lon){
+  try{
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+    const data = await res.json();
+    return data.address.city || data.address.town || data.address.village || data.address.county || 'Your Location';
+  } catch(e){
+    return 'Your Location';
+  }
+}
+
 function setWeather(){
-  const hr=new Date().getHours();
-  const scenarios=[
-    {icon:'☀️',temp:'28°C',desc:'Sunny · Taipei',tip:'Great day to move sun-lovers outside!'},
-    {icon:'⛅',temp:'24°C',desc:'Partly cloudy · Taipei',tip:'Good day to water your bright-light plants.'},
-    {icon:'🌧️',temp:'22°C',desc:'Rainy · Taipei',tip:'Hold off on watering — humidity is high!'},
-    {icon:'🌤️',temp:'26°C',desc:'Mostly sunny · Taipei',tip:'Perfect weather for your balcony plants.'},
-  ];
-  const s=scenarios[Math.floor(Math.random()*scenarios.length)];
-  document.getElementById('w-icon').textContent=s.icon;
-  document.getElementById('w-temp').textContent=s.temp;
-  document.getElementById('w-desc').textContent=s.desc;
-  document.getElementById('w-tip').textContent=s.tip;
+  document.getElementById('w-icon').textContent='🔍';
+  document.getElementById('w-temp').textContent='...';
+  document.getElementById('w-desc').textContent='Detecting location…';
+  document.getElementById('w-tip').textContent='Fetching live weather for your plants…';
+
+  if(!navigator.geolocation){
+    setWeatherFallback();
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const {latitude:lat, longitude:lon} = pos.coords;
+      const city = await reverseGeocode(lat, lon);
+      await fetchWeather(lat, lon, city);
+    },
+    _err => {
+      // Permission denied or unavailable — silently fall back
+      setWeatherFallback();
+    },
+    { timeout: 8000, maximumAge: 600000 }
+  );
 }
 
 // ── LOCALSTORAGE PERSISTENCE ─────────────────────────────
