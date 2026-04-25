@@ -432,6 +432,10 @@ tbody td:first-child{font-weight:600;color:var(--text-dark)}
 <footer style="text-align:center;padding:22px;font-size:13px;color:var(--text-light);border-top:1px solid rgba(122,158,126,.15);background:var(--white);margin-top:48px">
   © 2024 <strong style="color:var(--moss)">Plant Care Pro</strong> — Keep your plants happy &amp; healthy!
   <span class="material-icons-outlined" style="font-size:13px;vertical-align:middle;color:var(--sage);margin-left:4px">park</span>
+  <br/>
+  <button onclick="resetAllData()" style="margin-top:10px;background:none;border:none;font-size:11px;color:var(--text-light);cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;opacity:.6">
+    Reset all data
+  </button>
 </footer>
 
 <!-- ═══════════════════ MODALS ═══════════════════ -->
@@ -1171,9 +1175,108 @@ function setWeather(){
   document.getElementById('w-tip').textContent=s.tip;
 }
 
+// ── LOCALSTORAGE PERSISTENCE ─────────────────────────────
+const STORAGE_PLANTS  = 'plantcare_plants_v1';
+const STORAGE_PROFILE = 'plantcare_profile_v1';
+const STORAGE_DATE    = 'plantcare_lastdate_v1';
+
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_PLANTS,  JSON.stringify(plants));
+    localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
+  } catch(e){ console.warn('Could not save to localStorage',e); }
+}
+
+function loadData(){
+  try{
+    const sp = localStorage.getItem(STORAGE_PLANTS);
+    const sr = localStorage.getItem(STORAGE_PROFILE);
+    if(sp) plants  = JSON.parse(sp);
+    if(sr) Object.assign(profile, JSON.parse(sr));
+  } catch(e){ console.warn('Could not load from localStorage',e); }
+}
+
+// Each new day, reset watered flags and tick down waterIn/fertIn
+function tickDays(){
+  const today = new Date().toDateString();
+  const last  = localStorage.getItem(STORAGE_DATE);
+  if(last === today) return;           // same day — nothing to tick
+  const days = last
+    ? Math.round((new Date(today)-new Date(last))/(1000*60*60*24))
+    : 0;
+  if(days > 0){
+    plants.forEach(p=>{
+      p.watered  = false;
+      p.waterIn  = Math.max(1, p.waterIn  - days);
+      p.fertIn   = Math.max(1, p.fertIn   - days);
+      // small health decay if overdue on water
+      if(p.waterIn <= 1 && !p.watered) p.health = Math.max(10, p.health - 5);
+    });
+  }
+  localStorage.setItem(STORAGE_DATE, today);
+  saveData();
+}
+
+// Patch every mutating function to auto-save ──────────────
+const _waterPlant = waterPlant;
+waterPlant = function(id,e){
+  _waterPlant(id,e);
+  saveData();
+};
+
+const _waterAll = waterAll;
+waterAll = function(){
+  _waterAll();
+  saveData();
+};
+
+const _confirmMove = confirmMove;
+confirmMove = function(){
+  _confirmMove();
+  saveData();
+};
+
+const _addPlant = addPlant;
+addPlant = function(){
+  _addPlant();
+  saveData();
+};
+
+const _deletePlant = deletePlant;
+deletePlant = function(id){
+  _deletePlant(id);
+  saveData();
+};
+
+const _saveEdit = saveEdit;
+saveEdit = function(){
+  _saveEdit();
+  saveData();
+};
+
+const _saveProfile = saveProfile;
+saveProfile = function(){
+  _saveProfile();
+  saveData();
+};
+
+// ── RESET BUTTON (in case user wants a fresh start) ───────
+function resetAllData(){
+  if(!confirm('⚠️ This will delete ALL your plants and settings and reset to defaults. Are you sure?')) return;
+  localStorage.removeItem(STORAGE_PLANTS);
+  localStorage.removeItem(STORAGE_PROFILE);
+  localStorage.removeItem(STORAGE_DATE);
+  location.reload();
+}
+
 // ── INIT ─────────────────────────────────────────────────
+loadData();
+tickDays();
 const hr=new Date().getHours();
-profile.greeting=hr<12?'Good morning,':hr<17?'Good afternoon,':'Good evening,';
+// Only set greeting from time if user hasn't customised it
+if(!profile.greeting || ['Good morning,','Good afternoon,','Good evening,'].includes(profile.greeting)){
+  profile.greeting=hr<12?'Good morning,':hr<17?'Good afternoon,':'Good evening,';
+}
 setWeather();
 renderAll();
 </script>
