@@ -1,0 +1,2239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Plant Care Pro — My Plant Oasis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&family=Material+Icons+Outlined&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --sage:#7a9e7e;--sage-light:#b5cdb7;--sage-dark:#4a7250;
+  --cream:#f7f3ed;--cream-dark:#ede7dc;
+  --moss:#3a5c3e;--amber:#d4a853;--terracotta:#c87941;
+  --white:#ffffff;--text-dark:#1e2e20;--text-mid:#4a6350;--text-light:#7a9e7e;
+  --shadow-sm:0 2px 8px rgba(58,92,62,.08);
+  --shadow-md:0 6px 24px rgba(58,92,62,.13);
+  --shadow-lg:0 20px 56px rgba(58,92,62,.2);
+  --radius:16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text-dark);min-height:100vh;
+  background-image:radial-gradient(ellipse at 80% 0%,rgba(122,158,126,.15) 0%,transparent 60%),
+  radial-gradient(ellipse at 10% 90%,rgba(74,114,80,.1) 0%,transparent 50%);}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--cream-dark)}
+::-webkit-scrollbar-thumb{background:var(--sage-light);border-radius:99px}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:300;display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:68px;background:rgba(247,243,237,.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(122,158,126,.18);box-shadow:0 1px 0 rgba(122,158,126,.1),var(--shadow-sm)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer}
+.logo-icon{width:36px;height:36px;background:var(--moss);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--cream)}
+.logo-text{font-family:'Playfair Display',serif;font-size:19px;font-weight:700;color:var(--moss)}
+.header-right{display:flex;align-items:center;gap:10px}
+
+/* ── SEARCH (inline above plant grid, with dropdown) ── */
+.search-bar-wrap{position:relative;margin-bottom:20px}
+.search-bar-inner{display:flex;align-items:center;background:var(--white);border:1.5px solid var(--sage-light);
+  border-radius:14px;padding:0 14px;gap:10px;transition:border-color .2s,box-shadow .2s;
+  box-shadow:var(--shadow-sm)}
+.search-bar-inner:focus-within{border-color:var(--sage-dark);box-shadow:0 0 0 3px rgba(122,158,126,.15),var(--shadow-sm)}
+.search-bar-inner .material-icons-outlined{color:var(--sage);font-size:20px;flex-shrink:0}
+.search-bar-inner input{border:none;background:transparent;padding:13px 0;font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--text-dark);width:100%;outline:none}
+.search-bar-inner input::placeholder{color:var(--text-light)}
+.search-clear-btn{background:none;border:none;cursor:pointer;color:var(--text-light);padding:4px;
+  border-radius:6px;display:none;flex-shrink:0;line-height:0;transition:color .15s,background .15s}
+.search-clear-btn:hover{color:var(--text-dark);background:var(--cream-dark)}
+.search-clear-btn .material-icons-outlined{font-size:18px}
+.search-clear-btn.visible{display:flex}
+/* Dropdown results */
+.search-dropdown{position:absolute;top:calc(100% + 8px);left:0;right:0;background:var(--white);
+  border:1.5px solid var(--sage-light);border-radius:14px;box-shadow:var(--shadow-lg);
+  z-index:400;display:none;overflow:hidden;animation:fadeIn .15s ease}
+.search-dropdown.open{display:block}
+.search-result-item{display:flex;align-items:center;gap:12px;padding:11px 16px;cursor:pointer;
+  transition:background .12s;border-bottom:1px solid rgba(122,158,126,.08)}
+.search-result-item:last-child{border-bottom:none}
+.search-result-item:hover{background:rgba(122,158,126,.07)}
+.search-result-thumb{width:40px;height:40px;border-radius:10px;background-size:cover;
+  background-position:center;flex-shrink:0;background-color:var(--cream-dark);
+  display:flex;align-items:center;justify-content:center}
+.search-result-thumb .material-icons-outlined{font-size:20px;color:var(--sage)}
+.search-result-name{font-size:14px;font-weight:600;color:var(--text-dark)}
+.search-result-meta{font-size:12px;color:var(--text-light);margin-top:1px}
+.search-result-badge{margin-left:auto;flex-shrink:0}
+.search-no-results{padding:20px;text-align:center;color:var(--text-light);font-size:13px}
+.search-no-results .material-icons-outlined{font-size:32px;display:block;margin-bottom:6px;opacity:.4}
+
+/* Icon buttons */
+.icon-btn{position:relative;width:38px;height:38px;border-radius:10px;border:1.5px solid var(--sage-light);
+  background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  color:var(--sage-dark);transition:background .2s,border-color .2s;font-size:0;flex-shrink:0}
+.icon-btn:hover{background:var(--cream-dark);border-color:var(--sage)}
+.icon-btn .material-icons-outlined{font-size:19px}
+.notif-dot{position:absolute;top:5px;right:5px;width:8px;height:8px;background:var(--amber);
+  border-radius:50%;border:2px solid var(--cream);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.2)}}
+.avatar-btn{width:38px;height:38px;border-radius:10px;background-size:cover;background-position:center;
+  border:2px solid var(--sage-light);cursor:pointer;transition:border-color .2s,transform .15s;flex-shrink:0}
+.avatar-btn:hover{border-color:var(--sage);transform:scale(1.05)}
+
+/* MAIN */
+main{max-width:1200px;margin:0 auto;padding:44px 32px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:40px;gap:16px;flex-wrap:wrap}
+.page-title{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--moss);line-height:1.1}
+.page-title span{display:block;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;
+  color:var(--text-light);letter-spacing:.6px;margin-bottom:4px;text-transform:uppercase}
+.btn-primary{display:inline-flex;align-items:center;gap:7px;background:var(--moss);color:var(--white);
+  border:none;border-radius:12px;padding:11px 20px;font-family:'DM Sans',sans-serif;font-size:14px;
+  font-weight:600;cursor:pointer;transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 12px rgba(58,92,62,.25);white-space:nowrap}
+.btn-primary:hover{background:var(--sage-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(58,92,62,.3)}
+.btn-primary .material-icons-outlined{font-size:17px}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:44px}
+.stat-card{background:var(--white);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow-sm);
+  border:1px solid rgba(122,158,126,.12);display:flex;align-items:center;gap:13px;
+  transition:transform .2s,box-shadow .2s;cursor:default}
+.stat-card.clickable{cursor:pointer}
+.stat-card.clickable:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.stat-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon.green{background:rgba(122,158,126,.15);color:var(--moss)}
+.stat-icon.amber{background:rgba(212,168,83,.15);color:var(--terracotta)}
+.stat-icon.blue{background:rgba(59,130,246,.1);color:#1d4ed8}
+.stat-icon .material-icons-outlined{font-size:21px}
+.stat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--moss);line-height:1;margin-bottom:2px}
+.stat-lbl{font-size:12px;color:var(--text-light);font-weight:500}
+
+/* SECTION LABEL */
+.section-label{display:flex;align-items:center;gap:9px;margin-bottom:18px}
+.section-label h3{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;color:var(--moss)}
+.section-label .material-icons-outlined{color:var(--sage);font-size:21px}
+
+/* TABLE */
+.table-section{margin-bottom:48px}
+.table-wrapper{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-md);
+  overflow:hidden;border:1px solid rgba(122,158,126,.15)}
+table{width:100%;border-collapse:collapse;min-width:620px}
+thead{background:linear-gradient(135deg,var(--moss),var(--sage-dark))}
+thead th{padding:13px 18px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;
+  letter-spacing:1.1px;color:rgba(247,243,237,.85)}
+tbody tr{border-bottom:1px solid rgba(122,158,126,.1);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(122,158,126,.05)}
+tbody td{padding:13px 18px;font-size:13.5px;color:var(--text-mid)}
+tbody td:first-child{font-weight:600;color:var(--text-dark)}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;padding:3px 9px;border-radius:20px;font-weight:500}
+.badge .material-icons-outlined{font-size:12px}
+.badge-water{background:rgba(59,130,246,.1);color:#1d4ed8}
+.badge-sun{background:rgba(212,168,83,.15);color:#92400e}
+.badge-fert{background:rgba(122,158,126,.15);color:var(--moss)}
+.badge-done{background:rgba(34,197,94,.12);color:#166534}
+.badge-warn{background:rgba(239,68,68,.1);color:#dc2626}
+.action-btn{background:none;border:1.5px solid var(--sage-light);color:var(--moss);border-radius:8px;
+  padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s;
+  font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:4px}
+.action-btn .material-icons-outlined{font-size:14px}
+.action-btn:hover{background:rgba(122,158,126,.1);border-color:var(--sage)}
+.action-btn.watered{background:rgba(34,197,94,.1);border-color:#86efac;color:#166534;cursor:default}
+
+/* BOTTOM GRID */
+.bottom-grid{display:grid;grid-template-columns:2fr 1fr;gap:28px;align-items:start}
+
+/* PLANT CARDS */
+.plant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(172px,1fr));gap:18px}
+.plant-card{background:var(--white);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);
+  border:1px solid rgba(122,158,126,.12);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  cursor:pointer;animation:fadeUp .5s ease both;position:relative}
+.plant-card:hover{transform:translateY(-5px) scale(1.01);box-shadow:var(--shadow-lg)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.plant-card-img{width:100%;height:145px;background-size:cover;background-position:center;position:relative}
+.plant-card-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(30,46,32,.35),transparent 60%)}
+.plant-card-placeholder{width:100%;height:145px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+  display:flex;align-items:center;justify-content:center}
+.plant-card-placeholder .material-icons-outlined{font-size:42px;color:rgba(122,158,126,.4)}
+.plant-card-body{padding:12px 14px}
+.plant-card-body h4{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:5px}
+.plant-meta{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--text-light);margin-bottom:4px}
+.plant-meta .material-icons-outlined{font-size:13px}
+.water-tag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:500;
+  color:#1d4ed8;background:rgba(59,130,246,.08);border-radius:8px;padding:3px 8px;margin-top:2px}
+.water-tag .material-icons-outlined{font-size:12px}
+.water-tag.done{color:#166634;background:rgba(34,197,94,.1)}
+.water-tag.urgent{color:#dc2626;background:rgba(239,68,68,.1)}
+.card-actions{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px solid rgba(122,158,126,.1)}
+.card-mini-btn{flex:1;border:none;border-radius:8px;padding:5px 2px;font-size:11px;font-weight:600;
+  cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:3px;
+  transition:background .15s,transform .1s}
+.card-mini-btn .material-icons-outlined{font-size:13px}
+.card-mini-btn:hover{transform:scale(1.04)}
+.cmb-water{background:rgba(59,130,246,.1);color:#1d4ed8}
+.cmb-water:hover{background:rgba(59,130,246,.2)}
+.cmb-move{background:rgba(122,158,126,.1);color:var(--moss)}
+.cmb-move:hover{background:rgba(122,158,126,.22)}
+.cmb-info{background:rgba(212,168,83,.1);color:#92400e}
+.cmb-info:hover{background:rgba(212,168,83,.2)}
+.card-watered-badge{position:absolute;top:9px;right:9px;background:rgba(34,197,94,.92);color:#fff;
+  font-size:10px;font-weight:700;border-radius:20px;padding:2px 8px;display:none;z-index:2}
+.card-watered-badge.show{display:block}
+
+/* ADD CARD */
+.plant-card-add{background:rgba(122,158,126,.05);border:2px dashed var(--sage-light);border-radius:var(--radius);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-height:228px;
+  cursor:pointer;transition:background .2s,border-color .2s;color:var(--text-light)}
+.plant-card-add:hover{background:rgba(122,158,126,.12);border-color:var(--sage)}
+.plant-card-add .material-icons-outlined{font-size:36px;color:var(--sage-light)}
+.plant-card-add .add-lbl{font-size:13px;font-weight:600}
+
+/* MAP */
+.map-panel{background:var(--white);border-radius:var(--radius);box-shadow:var(--shadow-md);
+  border:1px solid rgba(122,158,126,.15);overflow:hidden}
+.map-panel-inner{padding:18px}
+.floor-plan{width:100%;background:#f0ede8;border-radius:12px;padding:10px;border:1.5px solid rgba(181,205,183,.4)}
+/* All SVG elements default cursor=default; only .plant-pin gets pointer */
+#floor-svg{cursor:default;display:block}
+#floor-svg *{pointer-events:none}
+.plant-pin{pointer-events:all !important;cursor:pointer}
+.plant-pin:hover .pin-circle{transform:scale(1.2);transform-box:fill-box;transform-origin:center}
+.pin-circle{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+/* SVG inline tooltip */
+.svg-tip{pointer-events:none}
+/* Map tooltip (HTML) */
+.map-tooltip{position:fixed;background:var(--moss);color:#fff;font-size:12px;font-weight:600;
+  padding:5px 11px;border-radius:8px;pointer-events:none;display:none;z-index:9999;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow:var(--shadow-md)}
+
+/* OVERLAY & MODAL */
+.overlay{position:fixed;inset:0;background:rgba(20,35,22,.48);backdrop-filter:blur(5px);
+  z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* Fix 3: scrollbar stays inside rounded shape via overflow on wrapper */
+.modal{background:var(--cream);border-radius:22px;box-shadow:var(--shadow-lg);
+  width:100%;max-width:480px;position:relative;animation:slideUp .28s cubic-bezier(.34,1.56,.64,1);
+  max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-scroll{padding:32px;overflow-y:auto;flex:1;
+  scrollbar-width:thin;scrollbar-color:var(--sage-light) transparent}
+.modal-scroll::-webkit-scrollbar{width:5px}
+.modal-scroll::-webkit-scrollbar-track{background:transparent}
+.modal-scroll::-webkit-scrollbar-thumb{background:var(--sage-light);border-radius:99px}
+@keyframes slideUp{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--moss);margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--text-light);margin-bottom:22px}
+.close-btn{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:9px;
+  border:1.5px solid var(--sage-light);background:var(--white);display:flex;align-items:center;
+  justify-content:center;cursor:pointer;color:var(--text-mid);transition:background .15s;z-index:2}
+.close-btn:hover{background:var(--cream-dark)}
+.close-btn .material-icons-outlined{font-size:17px}
+
+/* FORM */
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-mid);
+  text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;border:1.5px solid var(--sage-light);
+  background:var(--white);border-radius:10px;padding:10px 13px;font-family:'DM Sans',sans-serif;
+  font-size:14px;color:var(--text-dark);outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--sage-dark);box-shadow:0 0 0 3px rgba(122,158,126,.15)}
+.form-group textarea{resize:vertical;min-height:78px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.btn-group{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
+.btn-secondary{flex:1;border:1.5px solid var(--sage-light);background:var(--white);color:var(--text-mid);
+  border-radius:12px;padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:background .15s;min-width:80px}
+.btn-secondary:hover{background:var(--cream-dark)}
+.btn-danger{background:rgba(239,68,68,.08);border:1.5px solid rgba(239,68,68,.22);color:#dc2626;
+  border-radius:12px;padding:11px 16px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;
+  cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-danger:hover{background:rgba(239,68,68,.16)}
+.btn-danger .material-icons-outlined{font-size:16px}
+
+/* AVATAR */
+.avatar-preview{width:86px;height:86px;border-radius:18px;background-size:cover;background-position:center;
+  border:3px solid var(--sage-light);margin:0 auto 14px;position:relative;overflow:hidden;cursor:pointer}
+.avatar-preview-overlay{position:absolute;inset:0;background:rgba(30,46,32,.5);display:flex;
+  align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.avatar-preview:hover .avatar-preview-overlay{opacity:1}
+.avatar-preview-overlay .material-icons-outlined{color:#fff;font-size:28px}
+.avatar-options{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px}
+.avatar-option{width:100%;aspect-ratio:1;border-radius:12px;background-size:cover;background-position:center;
+  border:2.5px solid transparent;cursor:pointer;transition:border-color .15s,transform .15s;background-color:var(--cream-dark)}
+.avatar-option:hover{border-color:var(--sage);transform:scale(1.06)}
+.avatar-option.selected{border-color:var(--moss)}
+.avatar-upload-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  border:1.5px dashed var(--sage-light);background:rgba(122,158,126,.04);border-radius:10px;
+  padding:10px;font-size:13px;font-weight:600;color:var(--text-light);cursor:pointer;
+  transition:background .15s,border-color .15s;font-family:'DM Sans',sans-serif}
+.avatar-upload-btn:hover{background:rgba(122,158,126,.12);border-color:var(--sage)}
+.avatar-upload-btn .material-icons-outlined{font-size:17px}
+
+/* NOTIFICATIONS */
+.notif-list{display:flex;flex-direction:column;gap:9px}
+.notif-item{background:var(--white);border-radius:12px;padding:12px 14px;border:1px solid rgba(122,158,126,.12);
+  display:flex;align-items:flex-start;gap:10px}
+.notif-icon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.notif-icon.water{background:rgba(59,130,246,.1);color:#1d4ed8}
+.notif-icon.fert{background:rgba(122,158,126,.15);color:var(--moss)}
+.notif-icon.warn{background:rgba(212,168,83,.15);color:var(--terracotta)}
+.notif-icon.ok{background:rgba(34,197,94,.1);color:#166634}
+.notif-icon .material-icons-outlined{font-size:17px}
+.notif-title{font-size:13.5px;font-weight:600;color:var(--text-dark);margin-bottom:2px}
+.notif-desc{font-size:12px;color:var(--text-light)}
+.notif-time{font-size:11px;color:var(--text-light);margin-left:auto;white-space:nowrap;padding-left:8px;padding-top:1px}
+
+/* PLANT DETAIL */
+.detail-img{width:100%;height:175px;background-size:cover;background-position:center;
+  border-radius:14px;margin-bottom:18px;overflow:hidden}
+.detail-img-placeholder{width:100%;height:175px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+  border-radius:14px;margin-bottom:18px;display:flex;align-items:center;justify-content:center}
+.detail-img-placeholder .material-icons-outlined{font-size:50px;color:rgba(122,158,126,.4)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.detail-item{background:var(--white);border-radius:10px;padding:10px 13px}
+.detail-item-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-light);font-weight:600;margin-bottom:3px}
+.detail-item-value{font-size:14px;font-weight:600;color:var(--text-dark)}
+.health-bar{height:6px;background:var(--cream-dark);border-radius:99px;margin-top:5px;overflow:hidden}
+.health-fill{height:100%;border-radius:99px;transition:width .6s}
+.care-log{background:var(--white);border-radius:12px;padding:13px;margin-bottom:14px}
+.care-log-title{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-light);margin-bottom:9px}
+.log-entry{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-mid);padding:5px 0;border-bottom:1px solid rgba(122,158,126,.08)}
+.log-entry:last-child{border-bottom:none}
+.log-entry .material-icons-outlined{font-size:14px;color:var(--sage)}
+.log-date{margin-left:auto;font-size:11px;color:var(--text-light)}
+
+/* WEATHER WIDGET */
+.weather-widget{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border-radius:14px;
+  padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.weather-icon{font-size:32px;line-height:1}
+.weather-temp{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+.weather-desc{font-size:12px;opacity:.8}
+.weather-tip{font-size:11.5px;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 10px;margin-top:10px;line-height:1.4}
+
+/* CARE SCHEDULE SECTION */
+.schedule-item{display:flex;align-items:center;gap:10px;background:var(--white);border-radius:11px;
+  padding:11px 14px;margin-bottom:8px;border:1px solid rgba(122,158,126,.1)}
+.schedule-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.schedule-dot.urgent{background:#ef4444}
+.schedule-dot.soon{background:var(--amber)}
+.schedule-dot.ok{background:#22c55e}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);
+  background:var(--moss);color:#fff;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:600;
+  font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;
+  box-shadow:var(--shadow-lg);z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;
+  opacity:0;pointer-events:none;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.toast .material-icons-outlined{font-size:18px}
+
+/* STREAK BAR */
+.streak-bar{background:linear-gradient(135deg,#1a3a1e,#2d5c33);border-radius:var(--radius);
+  padding:16px 22px;margin-bottom:20px;display:flex;align-items:center;gap:16px;
+  box-shadow:var(--shadow-md);position:relative;overflow:hidden}
+.streak-bar::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 80% 50%,rgba(212,168,83,.18) 0%,transparent 70%)}
+.streak-flame{font-size:28px;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(251,146,60,.6));
+  animation:flicker 2.5s ease-in-out infinite}
+@keyframes flicker{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.08) rotate(2deg)}}
+.streak-info{flex:1}
+.streak-count{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#fff;
+  line-height:1;margin-bottom:2px}
+.streak-label{font-size:12px;color:rgba(255,255,255,.65);font-weight:500}
+.streak-dots{display:flex;gap:5px;align-items:center}
+.streak-dot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
+  font-size:11px;transition:background .3s}
+.streak-dot.done{background:rgba(251,146,60,.8);border-color:rgba(251,146,60,.9)}
+.streak-dot.today{background:rgba(250,204,21,.9);border-color:#fbbf24;box-shadow:0 0 8px rgba(250,204,21,.5)}
+
+/* DAILY QUOTE */
+.quote-card{background:var(--white);border-radius:var(--radius);padding:20px 22px;
+  margin-bottom:24px;border:1px solid rgba(122,158,126,.12);box-shadow:var(--shadow-sm);
+  position:relative;overflow:hidden}
+.quote-card::before{content:'"';position:absolute;top:-8px;left:12px;font-family:'Playfair Display',serif;
+  font-size:80px;color:rgba(122,158,126,.12);line-height:1;pointer-events:none}
+.quote-day-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+  color:var(--text-light);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.quote-day-badge .material-icons-outlined{font-size:13px}
+.quote-text{font-family:'Playfair Display',serif;font-size:15px;color:var(--text-dark);
+  line-height:1.6;font-style:italic;margin-bottom:10px;position:relative;z-index:1}
+.quote-author{font-size:12px;font-weight:600;color:var(--sage-dark)}
+
+/* BLUEPRINT MAP — professional house layout */
+.blueprint-wrap{background:#1e3a5f;border-radius:14px;padding:14px;margin-bottom:4px}
+#floor-svg{cursor:default;display:block}
+#floor-svg *{pointer-events:none}
+.plant-pin{pointer-events:all !important;cursor:pointer}
+.plant-pin:hover .pin-circle{transform:scale(1.25);transform-box:fill-box;transform-origin:center}
+.pin-circle{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+.map-tooltip{position:fixed;background:#1e3a5f;color:#fff;font-size:12px;font-weight:600;
+  padding:5px 11px;border-radius:8px;pointer-events:none;display:none;z-index:9999;
+  font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow:var(--shadow-md)}
+
+/* IMAGE CROP MODAL */
+.crop-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:700;
+  display:none;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:16px}
+.crop-overlay.open{display:flex}
+.crop-container{position:relative;width:min(480px,90vw);height:min(360px,60vh);
+  background:#111;border-radius:16px;overflow:hidden}
+.crop-image{position:absolute;cursor:move;user-select:none;-webkit-user-select:none;touch-action:none}
+.crop-frame{position:absolute;inset:0;border:3px solid rgba(122,158,126,.9);border-radius:10px;
+  pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.5)}
+.crop-handle{position:absolute;width:18px;height:18px;border-radius:3px;
+  background:var(--sage);border:2px solid #fff;cursor:se-resize}
+.crop-handle.tl{top:-4px;left:-4px;cursor:nw-resize}
+.crop-handle.tr{top:-4px;right:-4px;cursor:ne-resize}
+.crop-handle.bl{bottom:-4px;left:-4px;cursor:sw-resize}
+.crop-handle.br{bottom:-4px;right:-4px;cursor:se-resize}
+.crop-actions{display:flex;gap:12px;align-items:center}
+.crop-btn{border:none;border-radius:12px;padding:11px 22px;font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:transform .15s}
+.crop-btn:hover{transform:translateY(-1px)}
+.crop-btn.confirm{background:var(--moss);color:#fff;box-shadow:0 4px 12px rgba(58,92,62,.3)}
+.crop-btn.cancel{background:rgba(255,255,255,.12);color:#fff}
+.crop-hint{font-size:12px;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .bottom-grid{grid-template-columns:1fr}
+  header{padding:0 16px}
+  main{padding:28px 14px}
+  .page-title{font-size:30px}
+  .stats-row{grid-template-columns:repeat(3,1fr);gap:10px}
+}
+@media(max-width:560px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-icon"><span class="material-icons-outlined" style="font-size:18px">local_florist</span></div>
+    <span class="logo-text">Plant Care Pro</span>
+  </div>
+  <div class="header-right">
+    <button class="icon-btn" title="Notifications" onclick="openModal('modal-notifs')">
+      <span class="material-icons-outlined">notifications</span>
+      <span class="notif-dot" id="notif-dot"></span>
+    </button>
+    <button class="icon-btn" title="Care schedule" onclick="openModal('modal-tasks')">
+      <span class="material-icons-outlined">calendar_today</span>
+    </button>
+    <div id="header-avatar" class="avatar-btn" title="Edit profile" onclick="openModal('modal-profile')"></div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main>
+  <div class="page-header">
+    <h2 class="page-title">
+      <span id="greeting-label">Welcome back</span>
+      <span id="user-display-name">My Plant Oasis</span>
+    </h2>
+    <button class="btn-primary" onclick="openModal('modal-add')">
+      <span class="material-icons-outlined">add_circle_outline</span>Add New Plant
+    </button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon green"><span class="material-icons-outlined">forest</span></div>
+      <div><div class="stat-num" id="stat-total">4</div><div class="stat-lbl">Total Plants</div></div>
+    </div>
+    <div class="stat-card clickable" onclick="openModal('modal-tasks')" title="View watering tasks">
+      <div class="stat-icon blue"><span class="material-icons-outlined">water_drop</span></div>
+      <div><div class="stat-num" id="stat-water">2</div><div class="stat-lbl">Water Soon</div></div>
+    </div>
+    <div class="stat-card clickable" onclick="openModal('modal-tasks')" title="View all tasks">
+      <div class="stat-icon amber"><span class="material-icons-outlined">eco</span></div>
+      <div><div class="stat-num" id="stat-tasks">3</div><div class="stat-lbl">Tasks Pending</div></div>
+    </div>
+  </div>
+
+  <!-- Upcoming tasks table -->
+  <div class="table-section">
+    <div class="section-label">
+      <span class="material-icons-outlined">calendar_today</span>
+      <h3>Upcoming Tasks</h3>
+    </div>
+    <div class="table-wrapper">
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Plant</th><th>Location</th><th>Watering</th>
+              <th>Sunlight</th><th>Fertilization</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tasks-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: cards + map -->
+  <div class="bottom-grid">
+    <div>
+      <div class="section-label">
+        <span class="material-icons-outlined">forest</span><h3>My Leafy Friends</h3>
+      </div>
+      <!-- NEW: Inline search bar right above cards -->
+      <div class="search-bar-wrap" id="search-bar-wrap">
+        <div class="search-bar-inner">
+          <span class="material-icons-outlined">search</span>
+          <input type="search" id="plant-search-input" placeholder="Search by name, location or species…"
+            oninput="handleSearchInput(this.value)" onkeydown="searchKeyNav(event)"
+            autocomplete="off"/>
+          <button class="search-clear-btn" id="search-clear-btn" onclick="clearSearch()" title="Clear search">
+            <span class="material-icons-outlined">close</span>
+          </button>
+        </div>
+        <div class="search-dropdown" id="search-dropdown"></div>
+      </div>
+      <div class="plant-grid" id="plant-grid"></div>
+    </div>
+    <div>
+      <div class="section-label">
+        <span class="material-icons-outlined">map</span><h3>Plant Locations</h3>
+      </div>
+
+      <!-- STREAK BAR -->
+      <div class="streak-bar">
+        <div class="streak-flame">🔥</div>
+        <div class="streak-info">
+          <div class="streak-count"><span id="streak-num">0</span> day streak</div>
+          <div class="streak-label" id="streak-label">Start watering daily!</div>
+        </div>
+        <div class="streak-dots" id="streak-dots"></div>
+      </div>
+
+      <!-- DAILY QUOTE -->
+      <div class="quote-card">
+        <div class="quote-day-badge">
+          <span class="material-icons-outlined">auto_awesome</span>
+          <span id="quote-day-label">Today's Thought</span>
+        </div>
+        <div class="quote-text" id="quote-text">Loading…</div>
+        <div class="quote-author" id="quote-author"></div>
+      </div>
+
+      <!-- WEATHER -->
+      <div class="map-panel" style="margin-bottom:14px">
+        <div style="padding:14px 16px">
+          <div class="weather-widget" id="weather-widget" style="margin-bottom:0">
+            <div style="font-size:28px" id="w-icon">⛅</div>
+            <div style="flex:1">
+              <div class="weather-temp" id="w-temp">--°C</div>
+              <div class="weather-desc" id="w-desc">Detecting location…</div>
+              <div class="weather-tip" id="w-tip">Fetching live weather…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLUEPRINT MAP -->
+      <div class="map-panel">
+        <div style="padding:14px 14px 10px">
+          <div class="blueprint-wrap">
+            <svg id="floor-svg" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg" width="100%">
+              <defs>
+                <pattern id="grid" width="12" height="12" patternUnits="userSpaceOnUse">
+                  <circle cx="6" cy="6" r=".8" fill="rgba(255,255,255,.07)"/>
+                </pattern>
+              </defs>
+              <rect width="300" height="360" fill="url(#grid)"/>
+              <!-- Living Room — large left -->
+              <rect x="8"   y="8"   width="134" height="110" rx="5" fill="rgba(255,255,255,.06)" stroke="rgba(100,200,255,.55)" stroke-width="1.5"/>
+              <!-- Bedroom — top right -->
+              <rect x="158" y="8"   width="134" height="80"  rx="5" fill="rgba(255,255,255,.06)" stroke="rgba(100,200,255,.55)" stroke-width="1.5"/>
+              <!-- Bathroom — small top-right -->
+              <rect x="158" y="104" width="60"  height="60"  rx="5" fill="rgba(255,255,255,.06)" stroke="rgba(100,200,255,.55)" stroke-width="1.5"/>
+              <!-- Office — mid left -->
+              <rect x="8"   y="134" width="134" height="90"  rx="5" fill="rgba(255,255,255,.06)" stroke="rgba(100,200,255,.55)" stroke-width="1.5"/>
+              <!-- Kitchen — mid right -->
+              <rect x="158" y="180" width="134" height="52"  rx="5" fill="rgba(255,255,255,.06)" stroke="rgba(100,200,255,.55)" stroke-width="1.5"/>
+              <!-- Hallway — central strip -->
+              <rect x="8"   y="240" width="284" height="42"  rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(100,200,255,.35)" stroke-width="1" stroke-dasharray="5,3"/>
+              <!-- Balcony — bottom left -->
+              <rect x="8"   y="298" width="134" height="52"  rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(100,200,255,.35)" stroke-width="1" stroke-dasharray="4,3"/>
+              <!-- Garden — bottom right -->
+              <rect x="158" y="298" width="134" height="52"  rx="5" fill="rgba(255,255,255,.04)" stroke="rgba(100,200,255,.35)" stroke-width="1" stroke-dasharray="4,3"/>
+              <!-- Dimension lines -->
+              <line x1="142" y1="8"   x2="142" y2="230" stroke="rgba(100,200,255,.15)" stroke-width=".8"/>
+              <line x1="8"   y1="130" x2="292" y2="130" stroke="rgba(100,200,255,.15)" stroke-width=".8"/>
+              <line x1="8"   y1="236" x2="292" y2="236" stroke="rgba(100,200,255,.15)" stroke-width=".8"/>
+              <line x1="8"   y1="294" x2="292" y2="294" stroke="rgba(100,200,255,.15)" stroke-width=".8"/>
+              <!-- Door arcs -->
+              <path d="M142,80 Q162,80 162,100" stroke="rgba(100,200,255,.45)" stroke-width="1" fill="none"/>
+              <path d="M158,55 Q140,55 140,73" stroke="rgba(100,200,255,.45)" stroke-width="1" fill="none"/>
+              <path d="M142,170 Q162,170 162,188" stroke="rgba(100,200,255,.45)" stroke-width="1" fill="none"/>
+              <!-- Room labels -->
+              <text x="75"  y="22"  text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" font-weight="700" fill="rgba(150,220,255,.75)" letter-spacing="1.5">LIVING ROOM</text>
+              <text x="225" y="22"  text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" font-weight="700" fill="rgba(150,220,255,.75)" letter-spacing="1.5">BEDROOM</text>
+              <text x="188" y="118" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="5.5" font-weight="700" fill="rgba(150,220,255,.6)" letter-spacing="1">BATHROOM</text>
+              <text x="75"  y="148" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" font-weight="700" fill="rgba(150,220,255,.75)" letter-spacing="1.5">OFFICE</text>
+              <text x="225" y="194" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="7" font-weight="700" fill="rgba(150,220,255,.75)" letter-spacing="1.5">KITCHEN</text>
+              <text x="150" y="254" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(150,220,255,.5)" letter-spacing="1.5">HALLWAY</text>
+              <text x="75"  y="312" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(150,220,255,.5)" letter-spacing="1.5">BALCONY</text>
+              <text x="225" y="312" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="6" font-weight="700" fill="rgba(150,220,255,.5)" letter-spacing="1.5">GARDEN</text>
+              <!-- Compass -->
+              <g transform="translate(279,347)">
+                <circle cx="0" cy="0" r="9" fill="rgba(255,255,255,.05)" stroke="rgba(100,200,255,.3)" stroke-width="1"/>
+                <text x="0" y="-2" text-anchor="middle" font-size="5" fill="rgba(150,220,255,.8)" font-weight="700">N</text>
+                <line x1="0" y1="-1" x2="0" y2="-7" stroke="rgba(150,220,255,.6)" stroke-width="1"/>
+              </g>
+              <!-- Plant pins injected by JS -->
+              <g id="map-dots"></g>
+            </svg>
+          </div>
+          <p style="font-size:10.5px;color:var(--text-light);text-align:center;margin-top:8px;font-weight:500;opacity:.7">
+            Click any 📍 pin to view plant details
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer style="text-align:center;padding:22px;font-size:13px;color:var(--text-light);border-top:1px solid rgba(122,158,126,.15);background:var(--white);margin-top:48px">
+  © 2024 <strong style="color:var(--moss)">Plant Care Pro</strong> — Keep your plants happy &amp; healthy!
+  <span class="material-icons-outlined" style="font-size:13px;vertical-align:middle;color:var(--sage);margin-left:4px">park</span>
+  <br/>
+  <button onclick="resetAllData()" style="margin-top:10px;background:none;border:none;font-size:11px;color:var(--text-light);cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;opacity:.6">
+    Reset all data
+  </button>
+</footer>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+
+<!-- PROFILE -->
+<div class="overlay" id="modal-profile" onclick="overlayClick(event,'modal-profile')">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-profile')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">My Profile</div>
+    <div class="modal-sub">Personalise your Plant Care Pro account</div>
+    <div class="avatar-preview" id="profile-avatar-preview" onclick="document.getElementById('avatar-file').click()">
+      <div class="avatar-preview-overlay"><span class="material-icons-outlined">photo_camera</span></div>
+    </div>
+    <input type="file" id="avatar-file" accept="image/*" style="display:none" onchange="handleAvatarFile(event)"/>
+    <div style="text-align:center;margin-bottom:16px">
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:9px;font-weight:500">Or pick a preset avatar</p>
+      <div class="avatar-options" id="avatar-options"></div>
+      <div class="avatar-upload-btn" onclick="document.getElementById('avatar-file').click()">
+        <span class="material-icons-outlined">upload</span> Upload your own photo
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Display Name</label>
+      <input type="text" id="profile-name" placeholder="e.g. Plant Lover"/>
+    </div>
+    <div class="form-group">
+      <label>Page Greeting</label>
+      <input type="text" id="profile-greeting" placeholder="e.g. Welcome back, or Good morning"/>
+    </div>
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="closeModal('modal-profile')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="saveProfile()">
+        <span class="material-icons-outlined">save</span>Save Profile
+      </button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="overlay" id="modal-notifs" onclick="overlayClick(event,'modal-notifs')">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-notifs')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">Notifications</div>
+    <div class="modal-sub">Your plant care reminders</div>
+    <div class="notif-list" id="notif-list"></div>
+    <div class="btn-group" style="margin-top:18px">
+      <button class="btn-secondary" onclick="clearNotifs()">Mark all read</button>
+      <button class="btn-primary" style="flex:1" onclick="closeModal('modal-notifs')">Done</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PLANT -->
+<div class="overlay" id="modal-add" onclick="overlayClick(event,'modal-add')">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-add')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">Add a New Plant</div>
+    <div class="modal-sub">Tell us about your green friend</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Plant Name *</label>
+        <input type="text" id="add-name" placeholder="e.g. Peace Lily"/>
+      </div>
+      <div class="form-group">
+        <label>Species</label>
+        <input type="text" id="add-species" placeholder="e.g. Spathiphyllum"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Location *</label>
+        <select id="add-location">
+          <option value="">Select room…</option>
+          <option>Living Room</option><option>Bedroom</option>
+          <option>Office</option><option>Kitchen</option><option>Hallway</option>
+          <option>Bathroom</option><option>Balcony</option><option>Garden</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Sunlight</label>
+        <select id="add-sunlight">
+          <option>Bright, indirect</option><option>Low to indirect</option>
+          <option>Full sun</option><option>Low light</option><option>Medium light</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Water every (days)</label>
+        <input type="number" id="add-water-days" min="1" max="60" value="7"/>
+      </div>
+      <div class="form-group">
+        <label>Fertilize every (weeks)</label>
+        <input type="number" id="add-fert-weeks" min="1" max="52" value="4"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="add-notes" placeholder="Any special care tips…"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Plant Photo</label>
+      <div id="add-photo-preview" style="width:100%;height:110px;border-radius:10px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+        border:1.5px dashed var(--sage-light);transition:border-color .2s;position:relative;overflow:hidden;margin-bottom:8px"
+        onclick="document.getElementById('add-photo-file').click()">
+        <span class="material-icons-outlined" id="add-photo-icon" style="font-size:32px;color:rgba(122,158,126,.5)">add_a_photo</span>
+        <span id="add-photo-label" style="font-size:12px;font-weight:600;color:var(--text-light)">Click to upload a photo</span>
+        <div id="add-photo-img" style="position:absolute;inset:0;background-size:cover;background-position:center;display:none"></div>
+        <div id="add-photo-overlay" style="position:absolute;inset:0;background:rgba(30,46,32,.5);display:none;align-items:center;justify-content:center">
+          <span class="material-icons-outlined" style="color:#fff;font-size:28px">photo_camera</span>
+        </div>
+      </div>
+      <input type="file" id="add-photo-file" accept="image/*" style="display:none" onchange="handleAddPhotoFile(event)"/>
+      <input type="url" id="add-photo-url" placeholder="…or paste a photo URL" style="width:100%;border:1.5px solid var(--sage-light);
+        background:var(--white);border-radius:10px;padding:8px 13px;font-family:'DM Sans',sans-serif;
+        font-size:13px;color:var(--text-dark);outline:none;transition:border-color .2s"
+        oninput="handleAddPhotoUrl(this.value)"/>
+      <input type="hidden" id="add-photo"/>
+    </div>
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="closeModal('modal-add')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="addPlant()">
+        <span class="material-icons-outlined">add_circle_outline</span>Add Plant
+      </button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PLANT -->
+<div class="overlay" id="modal-edit" onclick="overlayClick(event,'modal-edit')">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-edit')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">Edit Plant</div>
+    <div class="modal-sub" id="edit-modal-sub"></div>
+    <input type="hidden" id="edit-id"/>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Plant Name</label>
+        <input type="text" id="edit-name"/>
+      </div>
+      <div class="form-group">
+        <label>Species</label>
+        <input type="text" id="edit-species"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Sunlight</label>
+        <select id="edit-sunlight">
+          <option>Bright, indirect</option><option>Low to indirect</option>
+          <option>Full sun</option><option>Low light</option><option>Medium light</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Water every (days)</label>
+        <input type="number" id="edit-water-days" min="1" max="60"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="edit-notes"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Plant Photo</label>
+      <div id="edit-photo-preview" style="width:100%;height:100px;border-radius:10px;background:linear-gradient(135deg,var(--cream-dark),var(--sage-light));
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;
+        border:1.5px dashed var(--sage-light);position:relative;overflow:hidden;margin-bottom:8px"
+        onclick="document.getElementById('edit-photo-file').click()">
+        <span class="material-icons-outlined" id="edit-photo-icon" style="font-size:28px;color:rgba(122,158,126,.5)">add_a_photo</span>
+        <span id="edit-photo-label" style="font-size:12px;font-weight:600;color:var(--text-light)">Click to change photo</span>
+        <div id="edit-photo-img" style="position:absolute;inset:0;background-size:cover;background-position:center;display:none"></div>
+        <div id="edit-photo-overlay" style="position:absolute;inset:0;background:rgba(30,46,32,.5);display:none;align-items:center;justify-content:center">
+          <span class="material-icons-outlined" style="color:#fff;font-size:26px">photo_camera</span>
+        </div>
+      </div>
+      <input type="file" id="edit-photo-file" accept="image/*" style="display:none" onchange="handleEditPhotoFile(event)"/>
+      <input type="url" id="edit-photo-url" placeholder="…or paste a photo URL"
+        style="width:100%;border:1.5px solid var(--sage-light);background:var(--white);border-radius:10px;
+        padding:8px 13px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text-dark);outline:none;
+        transition:border-color .2s" oninput="handleEditPhotoUrl(this.value)"/>
+      <input type="hidden" id="edit-photo"/>
+    </div>
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="saveEdit()">
+        <span class="material-icons-outlined">save</span>Save Changes
+      </button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLANT DETAIL -->
+<div class="overlay" id="modal-detail" onclick="overlayClick(event,'modal-detail')">
+  <div class="modal" id="modal-detail-content"></div>
+</div>
+
+<!-- MOVE PLANT -->
+<div class="overlay" id="modal-move" onclick="overlayClick(event,'modal-move')">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal('modal-move')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">Move Plant</div>
+    <div class="modal-sub" id="move-plant-name">Choose a new room</div>
+    <div class="form-group">
+      <label>New Location</label>
+      <select id="move-location">
+        <option>Living Room</option><option>Bedroom</option>
+        <option>Office</option><option>Kitchen</option><option>Hallway</option>
+        <option>Bathroom</option><option>Balcony</option><option>Garden</option>
+      </select>
+    </div>
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="closeModal('modal-move')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="confirmMove()">
+        <span class="material-icons-outlined">drive_file_move</span>Move Plant
+      </button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- TASKS / SCHEDULE -->
+<div class="overlay" id="modal-tasks" onclick="overlayClick(event,'modal-tasks')">
+  <div class="modal" style="max-width:540px">
+    <button class="close-btn" onclick="closeModal('modal-tasks')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">Care Schedule</div>
+    <div class="modal-sub">Everything your plants need this week</div>
+    <div id="tasks-modal-list"></div>
+    <div class="btn-group" style="margin-top:18px">
+      <button class="btn-primary" style="flex:1" onclick="closeModal('modal-tasks')">Done</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- WATER ALL CONFIRM -->
+<div class="overlay" id="modal-water-all" onclick="overlayClick(event,'modal-water-all')">
+  <div class="modal" style="max-width:380px">
+    <button class="close-btn" onclick="closeModal('modal-water-all')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll" style="text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">💧</div>
+    <div class="modal-title" style="text-align:center">Water All Plants?</div>
+    <div class="modal-sub" style="text-align:center;margin-bottom:24px">Mark every plant as watered today. You can undo individual plants from their detail view.</div>
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="closeModal('modal-water-all')">Cancel</button>
+      <button class="btn-primary" style="flex:1" onclick="waterAll()">
+        <span class="material-icons-outlined">water_drop</span>Water All
+      </button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- IMAGE CROP OVERLAY -->
+<div class="crop-overlay" id="crop-overlay">
+  <p class="crop-hint">Drag to reposition · pinch or scroll to zoom · drag corners to adjust crop</p>
+  <div class="crop-container" id="crop-container">
+    <img id="crop-img" class="crop-image" src="" alt="" draggable="false"/>
+    <div class="crop-frame">
+      <div class="crop-handle tl" id="ch-tl"></div>
+      <div class="crop-handle tr" id="ch-tr"></div>
+      <div class="crop-handle bl" id="ch-bl"></div>
+      <div class="crop-handle br" id="ch-br"></div>
+    </div>
+  </div>
+  <div class="crop-actions">
+    <button class="crop-btn cancel" onclick="closeCrop()">
+      <span class="material-icons-outlined" style="font-size:16px">close</span> Cancel
+    </button>
+    <button class="crop-btn confirm" onclick="confirmCrop()">
+      <span class="material-icons-outlined" style="font-size:16px">crop</span> Use this crop
+    </button>
+  </div>
+</div>
+
+<!-- MAP TOOLTIP -->
+<div class="map-tooltip" id="map-tooltip"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="material-icons-outlined" id="toast-icon">check_circle</span>
+  <span id="toast-msg">Done!</span>
+</div>
+
+<!-- ═══════════════════ JAVASCRIPT ═══════════════════ -->
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+const MAP_COORDS = {
+  'Living Room':{cx:75,  cy:95},   // centre-bottom of living room
+  'Bedroom'    :{cx:225, cy:68},   // centre of bedroom
+  'Bathroom'   :{cx:188, cy:148},  // centre of bathroom
+  'Office'     :{cx:75,  cy:195},  // centre of office
+  'Kitchen'    :{cx:225, cy:210},  // centre of kitchen
+  'Hallway'    :{cx:150, cy:261},  // centre of hallway
+  'Balcony'    :{cx:75,  cy:325},  // centre of balcony
+  'Garden'     :{cx:225, cy:325}   // centre of garden
+};
+const EMOJIS = {'Living Room':'🌿','Bedroom':'🌱','Office':'🍃','Kitchen':'🌾','Hallway':'🪴','Bathroom':'🌺','Balcony':'🌵','Garden':'🌻'};
+const HEALTH_COLORS = {
+  high:'linear-gradient(90deg,#4ade80,#22c55e)',
+  mid:'linear-gradient(90deg,#fbbf24,#f59e0b)',
+  low:'linear-gradient(90deg,#f87171,#ef4444)'
+};
+
+let plants = [
+  {id:1,name:'Fiddle Leaf Fig',species:'Ficus lyrata',location:'Living Room',sunlight:'Bright, indirect',
+   waterDays:7,fertWeeks:3,photo:'',
+   notes:'Sensitive to drafts. Water when top inch is dry. Do not overwater.',
+   watered:false,waterIn:2,fertIn:3,health:88,
+   log:[{icon:'water_drop',text:'Watered',date:'Apr 22'},{icon:'eco',text:'Fertilized',date:'Apr 3'},{icon:'content_cut',text:'Pruned dead leaf',date:'Mar 15'}]},
+  {id:2,name:'Snake Plant',species:'Sansevieria trifasciata',location:'Bedroom',sunlight:'Low to indirect',
+   waterDays:14,fertWeeks:6,photo:'',
+   notes:'Very drought tolerant. Perfect beginner plant. Tolerates neglect.',
+   watered:false,waterIn:5,fertIn:6,health:95,
+   log:[{icon:'water_drop',text:'Watered',date:'Apr 19'},{icon:'eco',text:'Fertilized',date:'Mar 28'}]},
+  {id:3,name:'Monstera',species:'Monstera deliciosa',location:'Office',sunlight:'Bright, indirect',
+   waterDays:7,fertWeeks:4,photo:'',
+   notes:'Loves humidity. Wipe leaves monthly. Support with a moss pole.',
+   watered:false,waterIn:3,fertIn:4,health:80,
+   log:[{icon:'water_drop',text:'Watered',date:'Apr 21'},{icon:'wb_sunny',text:'Moved to brighter spot',date:'Apr 10'}]},
+  {id:4,name:'Pothos',species:'Epipremnum aureum',location:'Kitchen',sunlight:'Low to medium',
+   waterDays:10,fertWeeks:5,photo:'',
+   notes:'Extremely easy care. Tolerates low light and irregular watering.',
+   watered:false,waterIn:4,fertIn:5,health:72,
+   log:[{icon:'water_drop',text:'Watered',date:'Apr 20'}]}
+];
+
+let profile = {
+  name:'My Plant Oasis',greeting:'Welcome back',
+  avatar:'https://lh3.googleusercontent.com/aida-public/AB6AXuCW0TxJXX40FmN5mvFvQpkJDfZ42nh7JUcotfKEPJndBzxJe5qT9y_dFwgvq7X9rtZkZcpa0fjRR9pWvkvtGkKzYz1l93gTQTFXC-ZFHHQK-v8fgB9wgw4CI11_VIgwgcyha2X9VRhGc4UCVd6Bu_u_Rcy8QLCl2d8twJGagUnDiprXcJFQwQd7bdrXMZ1agPd-N0qYUo6j2jdVfmkBwmkFl2k7xEJxXF2TCoVpD5Zbk_LJ_0t78uVXlbeAH6x0CYFRcz7S_ZpgtMa9'
+};
+
+const PRESET_AVATARS = [
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=plant1&backgroundColor=b5cdb7',
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=fern&backgroundColor=7a9e7e',
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=leaf&backgroundColor=4a7250',
+  'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=bloom&backgroundColor=d4a853',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=rose&backgroundColor=ede7dc',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=ivy&backgroundColor=b5cdb7',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=willow&backgroundColor=7a9e7e',
+  'https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=basil&backgroundColor=ede7dc',
+];
+
+let movingPlantId = null;
+
+// ── TOAST ──────────────────────────────────────────────
+function showToast(msg, type='green') {
+  const t=document.getElementById('toast');
+  const icons={green:'check_circle',water:'water_drop',warn:'warning',move:'drive_file_move',add:'add_circle',edit:'edit'};
+  document.getElementById('toast-icon').textContent = icons[type]||'check_circle';
+  document.getElementById('toast-msg').textContent = msg;
+  const colors={green:'var(--moss)',water:'#1d4ed8',warn:'var(--terracotta)',move:'var(--sage-dark)',add:'var(--moss)',edit:'var(--moss)'};
+  t.style.background = colors[type]||'var(--moss)';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ── MODALS ──────────────────────────────────────────────
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow='hidden';
+  if(id==='modal-profile') populateProfileModal();
+  if(id==='modal-notifs') populateNotifs();
+  if(id==='modal-tasks') populateTasksModal();
+}
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow='';
+}
+function overlayClick(e,id){
+  if(e.target===document.getElementById(id)) closeModal(id);
+}
+
+// ── RENDER ALL ──────────────────────────────────────────
+function renderAll(){
+  renderCards();
+  renderTable();
+  renderMap();
+  updateStats();
+}
+
+// ── STATS ───────────────────────────────────────────────
+function updateStats(){
+  document.getElementById('stat-total').textContent = plants.length;
+  document.getElementById('stat-water').textContent = plants.filter(p=>p.waterIn<=3&&!p.watered).length;
+  document.getElementById('stat-tasks').textContent = plants.filter(p=>!p.watered).length;
+  document.getElementById('user-display-name').textContent = profile.name;
+  document.getElementById('greeting-label').textContent = profile.greeting;
+  document.getElementById('header-avatar').style.backgroundImage = `url('${profile.avatar}')`;
+}
+
+// ── PLANT CARDS ─────────────────────────────────────────
+let _isFiltering = false;
+function renderCards(filter=''){
+  _isFiltering = filter.length > 0;
+  const grid=document.getElementById('plant-grid');
+  grid.innerHTML='';
+  const q = filter.toLowerCase();
+  const visible=plants.filter(p=>
+    p.name.toLowerCase().includes(q)||
+    p.location.toLowerCase().includes(q)||
+    (p.species||'').toLowerCase().includes(q)
+  );
+  visible.forEach((p,i)=>{
+    const card=document.createElement('div');
+    card.className='plant-card';
+    // No animation delay during search - prevents the flash
+    card.style.animationDelay = _isFiltering ? '0s' : (i*.07)+'s';
+    card.style.animation = _isFiltering ? 'none' : '';
+    const img=p.photo
+      ?`<div class="plant-card-img" style="background-image:url('${p.photo}')"></div>`
+      :`<div class="plant-card-placeholder"><span class="material-icons-outlined">local_florist</span></div>`;
+    const urgent = !p.watered && p.waterIn<=2;
+    const waterLabel=p.watered
+      ?`<div class="water-tag done"><span class="material-icons-outlined">check_circle</span>Watered today</div>`
+      :urgent
+        ?`<div class="water-tag urgent"><span class="material-icons-outlined">water_drop</span>Water in ${p.waterIn}d !</div>`
+        :`<div class="water-tag"><span class="material-icons-outlined">water_drop</span>Water in ${p.waterIn} day${p.waterIn!==1?'s':''}</div>`;
+    card.innerHTML=`
+      <span class="card-watered-badge${p.watered?' show':''}">✓ Watered</span>
+      ${img}
+      <div class="plant-card-body">
+        <h4>${p.name}</h4>
+        <div class="plant-meta"><span class="material-icons-outlined">location_on</span>${p.location}</div>
+        ${waterLabel}
+        <div class="card-actions">
+          <button class="card-mini-btn cmb-water" onclick="waterPlant(${p.id},event)" title="Mark watered">
+            <span class="material-icons-outlined">water_drop</span>Water
+          </button>
+          <button class="card-mini-btn cmb-move" onclick="openMoveModal(${p.id},event)" title="Move plant">
+            <span class="material-icons-outlined">drive_file_move</span>Move
+          </button>
+          <button class="card-mini-btn cmb-info" onclick="openDetail(${p.id},event)" title="View details">
+            <span class="material-icons-outlined">info</span>Info
+          </button>
+        </div>
+      </div>`;
+    card.addEventListener('click',()=>openDetail(p.id));
+    grid.appendChild(card);
+  });
+  // Add button
+  const addCard=document.createElement('div');
+  addCard.className='plant-card-add';
+  addCard.onclick=()=>openModal('modal-add');
+  addCard.innerHTML=`<span class="material-icons-outlined">add_circle_outline</span><span class="add-lbl">Add New Plant</span>`;
+  grid.appendChild(addCard);
+}
+
+// ── TABLE ───────────────────────────────────────────────
+function renderTable(){
+  const tbody=document.getElementById('tasks-tbody');
+  tbody.innerHTML='';
+  plants.forEach(p=>{
+    const tr=document.createElement('tr');
+    const urgent=!p.watered&&p.waterIn<=2;
+    const waterBadge=p.watered
+      ?`<span class="badge badge-done"><span class="material-icons-outlined">check_circle</span>Done today</span>`
+      :urgent
+        ?`<span class="badge badge-warn"><span class="material-icons-outlined">water_drop</span>In ${p.waterIn}d — urgent!</span>`
+        :`<span class="badge badge-water"><span class="material-icons-outlined">water_drop</span>In ${p.waterIn} day${p.waterIn!==1?'s':''}</span>`;
+    const btn=p.watered
+      ?`<button class="action-btn watered"><span class="material-icons-outlined">check</span>Watered</button>`
+      :`<button class="action-btn" onclick="waterPlant(${p.id})"><span class="material-icons-outlined">water_drop</span>Water</button>`;
+    tr.innerHTML=`
+      <td>${p.name}</td>
+      <td>${p.location}</td>
+      <td>${waterBadge}</td>
+      <td><span class="badge badge-sun"><span class="material-icons-outlined">wb_sunny</span>${p.sunlight}</span></td>
+      <td><span class="badge badge-fert">In ${p.fertIn} wk${p.fertIn!==1?'s':''}</span></td>
+      <td style="white-space:nowrap">${btn}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── MAP ─────────────────────────────────────────────────
+function renderMap(){
+  const g = document.getElementById('map-dots');
+  g.innerHTML = '';
+  const tooltip = document.getElementById('map-tooltip');
+  const byLoc = {};
+  plants.forEach(p=>{ if(!byLoc[p.location]) byLoc[p.location]=[]; byLoc[p.location].push(p); });
+
+  Object.entries(byLoc).forEach(([loc, ps])=>{
+    const base = MAP_COORDS[loc] || {cx:140,cy:180};
+    ps.forEach((p, i)=>{
+      // Spread multiple plants horizontally; keep them near bottom of their room
+      const spread = (ps.length - 1) * 14;
+      const startX = base.cx - spread / 2;
+      const cx = startX + i * 28;
+      const cy = base.cy;
+      const fill = p.watered ? '#22c55e' : '#3a5c3e';
+      const emoji = EMOJIS[loc] || '🌿';
+
+      const pinG = document.createElementNS('http://www.w3.org/2000/svg','g');
+      pinG.setAttribute('class','plant-pin');
+
+      // Circle + emoji — purely SVG, no nested foreignObject needed
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', '11');
+      circle.setAttribute('fill', fill);
+      circle.setAttribute('opacity', '0.93');
+      circle.setAttribute('class','pin-circle');
+
+      const emojiText = document.createElementNS('http://www.w3.org/2000/svg','text');
+      emojiText.setAttribute('x', cx);
+      emojiText.setAttribute('y', cy + 4);
+      emojiText.setAttribute('text-anchor','middle');
+      emojiText.setAttribute('font-size','11');
+      emojiText.setAttribute('fill','white');
+      emojiText.textContent = emoji;
+
+      pinG.appendChild(circle);
+      pinG.appendChild(emojiText);
+
+      // Mouse events on the <g> only — everything else has pointer-events:none via CSS
+      pinG.addEventListener('mouseenter', e => {
+        tooltip.textContent = `${p.name} · ${loc}`;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      pinG.addEventListener('mousemove', positionTooltip);
+      pinG.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+      pinG.addEventListener('click', () => openDetail(p.id));
+
+      g.appendChild(pinG);
+    });
+  });
+}
+
+function positionTooltip(e){
+  const t = document.getElementById('map-tooltip');
+  t.style.left = (e.clientX + 14) + 'px';
+  t.style.top  = (e.clientY - 36) + 'px';
+}
+
+// ── WATER PLANT ─────────────────────────────────────────
+function waterPlant(id,e){
+  if(e) e.stopPropagation();
+  const p=plants.find(x=>x.id===id);
+  if(!p||p.watered) return;
+  p.watered=true;
+  p.health=Math.min(100,p.health+5);
+  p.log.unshift({icon:'water_drop',text:'Watered',date:'Today'});
+  renderAll();
+  showToast(`💧 ${p.name} watered!`,'water');
+}
+
+// ── WATER ALL ───────────────────────────────────────────
+function waterAll(){
+  plants.forEach(p=>{
+    if(!p.watered){
+      p.watered=true;
+      p.health=Math.min(100,p.health+5);
+      p.log.unshift({icon:'water_drop',text:'Watered',date:'Today'});
+    }
+  });
+  closeModal('modal-water-all');
+  renderAll();
+  showToast(`💧 All ${plants.length} plants watered!`,'water');
+}
+
+// ── MOVE PLANT ──────────────────────────────────────────
+function openMoveModal(id,e){
+  if(e) e.stopPropagation();
+  movingPlantId=id;
+  const p=plants.find(x=>x.id===id);
+  document.getElementById('move-plant-name').textContent=`Choose a new room for "${p.name}"`;
+  document.getElementById('move-location').value=p.location;
+  openModal('modal-move');
+}
+function confirmMove(){
+  const p=plants.find(x=>x.id===movingPlantId);
+  const newLoc=document.getElementById('move-location').value;
+  if(newLoc===p.location){ closeModal('modal-move'); return; }
+  const old=p.location;
+  p.location=newLoc;
+  p.log.unshift({icon:'drive_file_move',text:`Moved from ${old} to ${newLoc}`,date:'Today'});
+  closeModal('modal-move');
+  renderAll();
+  showToast(`📦 ${p.name} moved to ${newLoc}!`,'move');
+}
+
+// ── ADD PLANT ───────────────────────────────────────────
+function addPlant(){
+  const name=document.getElementById('add-name').value.trim();
+  const loc=document.getElementById('add-location').value;
+  if(!name){ showToast('⚠️ Please enter a plant name','warn'); return; }
+  if(!loc){ showToast('⚠️ Please select a location','warn'); return; }
+  const wdays=parseInt(document.getElementById('add-water-days').value)||7;
+  const fwks=parseInt(document.getElementById('add-fert-weeks').value)||4;
+  plants.push({
+    id:Date.now(),name,
+    species:document.getElementById('add-species').value.trim()||'Unknown species',
+    location:loc,sunlight:document.getElementById('add-sunlight').value,
+    waterDays:wdays,fertWeeks:fwks,
+    photo:document.getElementById('add-photo').value.trim(),
+    notes:document.getElementById('add-notes').value.trim(),
+    watered:false,waterIn:wdays,fertIn:fwks,health:100,
+    log:[{icon:'local_florist',text:'Added to collection',date:'Today'}]
+  });
+  closeModal('modal-add');
+  ['add-name','add-species','add-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('add-location').value='';
+  document.getElementById('add-water-days').value=7;
+  document.getElementById('add-fert-weeks').value=4;
+  resetAddPhotoUI();
+  renderAll();
+  showToast(`🌱 ${name} added to your oasis!`,'add');
+}
+
+// ── PLANT DETAIL ────────────────────────────────────────
+function openDetail(id,e){
+  if(e) e.stopPropagation();
+  const p=plants.find(x=>x.id===id);
+  const hc=p.health>=70?'high':p.health>=40?'mid':'low';
+  const img=p.photo
+    ?`<div class="detail-img" style="background-image:url('${p.photo}');background-size:cover"></div>`
+    :`<div class="detail-img-placeholder"><span class="material-icons-outlined">local_florist</span></div>`;
+  const waterStatus=p.watered
+    ?`<span class="badge badge-done" style="font-size:13px"><span class="material-icons-outlined">check_circle</span>Watered today</span>`
+    :`<span class="badge ${p.waterIn<=2?'badge-warn':'badge-water'}" style="font-size:13px"><span class="material-icons-outlined">water_drop</span>Water in ${p.waterIn} day${p.waterIn!==1?'s':''}</span>`;
+  const logHtml=p.log.map(l=>`
+    <div class="log-entry">
+      <span class="material-icons-outlined">${l.icon}</span>${l.text}
+      <span class="log-date">${l.date}</span>
+    </div>`).join('');
+  document.getElementById('modal-detail-content').innerHTML=`
+    <button class="close-btn" onclick="closeModal('modal-detail')"><span class="material-icons-outlined">close</span></button>
+    <div class="modal-scroll">
+    <div class="modal-title">${p.name}</div>
+    <div class="modal-sub" style="margin-bottom:14px"><em>${p.species}</em></div>
+    ${img}
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="detail-item-label">Health</div>
+        <div class="detail-item-value">${p.health}%</div>
+        <div class="health-bar"><div class="health-fill" style="width:${p.health}%;background:${HEALTH_COLORS[hc]}"></div></div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">Status</div>
+        <div style="margin-top:4px">${waterStatus}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">Location</div>
+        <div class="detail-item-value">${p.location}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">Sunlight</div>
+        <div class="detail-item-value">${p.sunlight}</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">Water Cycle</div>
+        <div class="detail-item-value">Every ${p.waterDays} days</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-item-label">Fertilize Cycle</div>
+        <div class="detail-item-value">Every ${p.fertWeeks} weeks</div>
+      </div>
+    </div>
+    ${p.notes?`<div class="care-log" style="margin-bottom:13px"><div class="care-log-title">Notes</div><p style="font-size:13px;color:var(--text-mid);line-height:1.5">${p.notes}</p></div>`:''}
+    <div class="care-log">
+      <div class="care-log-title">Care Log</div>
+      ${logHtml}
+    </div>
+    <div class="btn-group" style="margin-top:16px;flex-wrap:wrap">
+      <button class="btn-danger" onclick="deletePlant(${p.id})"><span class="material-icons-outlined">delete</span>Remove</button>
+      <button class="btn-secondary" style="flex:none;padding:11px 14px" onclick="openEditModal(${p.id})">
+        <span class="material-icons-outlined" style="font-size:16px;vertical-align:middle">edit</span> Edit
+      </button>
+      <button class="btn-secondary" style="flex:none;padding:11px 14px" onclick="closeModal('modal-detail');openMoveModal(${p.id})">
+        <span class="material-icons-outlined" style="font-size:16px;vertical-align:middle">drive_file_move</span> Move
+      </button>
+      <button class="btn-primary" style="flex:1;min-width:120px" onclick="waterPlant(${p.id});closeModal('modal-detail')" ${p.watered?'disabled':''}>
+        <span class="material-icons-outlined">water_drop</span>${p.watered?'Already watered':'Water now'}
+      </button>
+    </div>
+    </div>`;
+  openModal('modal-detail');
+}
+
+function deletePlant(id){
+  const p=plants.find(x=>x.id===id);
+  if(!confirm(`Remove "${p.name}" from your collection?`)) return;
+  plants=plants.filter(x=>x.id!==id);
+  closeModal('modal-detail');
+  renderAll();
+  showToast(`🗑️ ${p.name} removed`,'warn');
+}
+
+// ── EDIT PLANT ──────────────────────────────────────────
+function openEditModal(id){
+  const p=plants.find(x=>x.id===id);
+  document.getElementById('edit-id').value=p.id;
+  document.getElementById('edit-modal-sub').textContent=`Editing "${p.name}"`;
+  document.getElementById('edit-name').value=p.name;
+  document.getElementById('edit-species').value=p.species;
+  document.getElementById('edit-sunlight').value=p.sunlight;
+  document.getElementById('edit-water-days').value=p.waterDays;
+  document.getElementById('edit-notes').value=p.notes||'';
+  document.getElementById('edit-photo').value=p.photo||'';
+  document.getElementById('edit-photo-file').value='';
+  populateEditPhotoUI(p.photo||'');
+  closeModal('modal-detail');
+  openModal('modal-edit');
+}
+function saveEdit(){
+  const id=parseInt(document.getElementById('edit-id').value);
+  const p=plants.find(x=>x.id===id);
+  p.name=document.getElementById('edit-name').value.trim()||p.name;
+  p.species=document.getElementById('edit-species').value.trim()||p.species;
+  p.sunlight=document.getElementById('edit-sunlight').value;
+  p.waterDays=parseInt(document.getElementById('edit-water-days').value)||p.waterDays;
+  p.notes=document.getElementById('edit-notes').value.trim();
+  p.photo=document.getElementById('edit-photo').value.trim();
+  p.log.unshift({icon:'edit',text:'Details updated',date:'Today'});
+  closeModal('modal-edit');
+  renderAll();
+  showToast(`✏️ ${p.name} updated!`,'edit');
+}
+
+// ── PROFILE ─────────────────────────────────────────────
+function populateProfileModal(){
+  document.getElementById('profile-avatar-preview').style.backgroundImage=`url('${profile.avatar}')`;
+  document.getElementById('profile-name').value=profile.name;
+  document.getElementById('profile-greeting').value=profile.greeting;
+  const opts=document.getElementById('avatar-options');
+  opts.innerHTML='';
+  PRESET_AVATARS.forEach(url=>{
+    const div=document.createElement('div');
+    div.className='avatar-option'+(profile.avatar===url?' selected':'');
+    div.style.backgroundImage=`url('${url}')`;
+    div.onclick=()=>{
+      profile.avatar=url;
+      document.getElementById('profile-avatar-preview').style.backgroundImage=`url('${url}')`;
+      document.querySelectorAll('.avatar-option').forEach(d=>d.classList.remove('selected'));
+      div.classList.add('selected');
+    };
+    opts.appendChild(div);
+  });
+}
+function handleAvatarFile(e){
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    profile.avatar=ev.target.result;
+    document.getElementById('profile-avatar-preview').style.backgroundImage=`url('${ev.target.result}')`;
+    document.querySelectorAll('.avatar-option').forEach(d=>d.classList.remove('selected'));
+  };
+  reader.readAsDataURL(file);
+}
+function saveProfile(){
+  const n=document.getElementById('profile-name').value.trim();
+  const g=document.getElementById('profile-greeting').value.trim();
+  if(n) profile.name=n;
+  if(g) profile.greeting=g;
+  closeModal('modal-profile');
+  updateStats();
+  showToast('✅ Profile saved!');
+}
+
+// ── NOTIFICATIONS ────────────────────────────────────────
+function populateNotifs(){
+  const notifs=[];
+  plants.forEach(p=>{
+    if(!p.watered&&p.waterIn<=2)
+      notifs.push({icon:'water_drop',cls:'water',title:`${p.name} needs water`,desc:`Due in ${p.waterIn} day${p.waterIn!==1?'s':''}`,time:`${p.waterIn}d`});
+    if(p.fertIn<=1)
+      notifs.push({icon:'eco',cls:'fert',title:`Fertilize ${p.name}`,desc:`Due in ${p.fertIn} week`,time:`${p.fertIn}w`});
+    if(p.health<70)
+      notifs.push({icon:'warning',cls:'warn',title:`${p.name} health is low`,desc:`Health: ${p.health}% — check on it`,time:''});
+  });
+  if(!notifs.length)
+    notifs.push({icon:'check_circle',cls:'ok',title:'All caught up!',desc:'No urgent tasks right now.',time:''});
+  document.getElementById('notif-list').innerHTML=notifs.map(n=>`
+    <div class="notif-item">
+      <div class="notif-icon ${n.cls}"><span class="material-icons-outlined">${n.icon}</span></div>
+      <div style="flex:1"><div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div></div>
+      ${n.time?`<div class="notif-time">${n.time}</div>`:''}
+    </div>`).join('');
+}
+function clearNotifs(){
+  document.getElementById('notif-dot').style.display='none';
+  document.getElementById('notif-list').innerHTML=`
+    <div class="notif-item">
+      <div class="notif-icon ok"><span class="material-icons-outlined">check_circle</span></div>
+      <div><div class="notif-title">All clear!</div><div class="notif-desc">No pending notifications.</div></div>
+    </div>`;
+  showToast('✅ All notifications cleared');
+}
+
+// ── TASKS MODAL ──────────────────────────────────────────
+function populateTasksModal(){
+  document.getElementById('tasks-modal-list').innerHTML=`
+    <button class="btn-primary" style="width:100%;margin-bottom:14px" onclick="closeModal('modal-tasks');openModal('modal-water-all')">
+      <span class="material-icons-outlined">water_drop</span>Water All Plants at Once
+    </button>`+
+  plants.map(p=>`
+    <div class="schedule-item">
+      <div class="schedule-dot ${!p.watered&&p.waterIn<=2?'urgent':p.waterIn<=4?'soon':'ok'}"></div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:14px;color:var(--text-dark)">${p.name}</div>
+        <div style="font-size:12px;color:var(--text-light)">${p.location} · Every ${p.waterDays} days</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;min-width:90px">
+        ${p.watered
+          ?`<span class="badge badge-done"><span class="material-icons-outlined">check_circle</span>Done</span>`
+          :`<span class="badge ${p.waterIn<=2?'badge-warn':'badge-water'}"><span class="material-icons-outlined">water_drop</span>${p.waterIn}d</span>`}
+        <span class="badge badge-fert">Fert ${p.fertIn}w</span>
+      </div>
+      ${!p.watered?`<button class="action-btn" style="margin-left:6px" onclick="waterPlant(${p.id});populateTasksModal()">
+        <span class="material-icons-outlined">water_drop</span>Water
+      </button>`:''}
+    </div>`).join('');
+}
+
+// ── SEARCH — inline dropdown above plant grid ────────────
+let _searchTimer = null;
+let _searchFocused = false;
+
+function handleSearchInput(q){
+  clearTimeout(_searchTimer);
+  document.getElementById('search-clear-btn').classList.toggle('visible', q.length > 0);
+  if(!q.trim()){ closeSearchDropdown(); renderCards(''); return; }
+  _searchTimer = setTimeout(()=>{
+    renderCards(q);          // update the grid (no animation)
+    renderSearchDropdown(q); // show dropdown
+  }, 60);
+}
+
+function renderSearchDropdown(q){
+  const dd = document.getElementById('search-dropdown');
+  const lq = q.toLowerCase();
+  const matches = plants.filter(p=>
+    p.name.toLowerCase().includes(lq)||
+    p.location.toLowerCase().includes(lq)||
+    (p.species||'').toLowerCase().includes(lq)
+  );
+  if(!matches.length){
+    dd.innerHTML=`<div class="search-no-results">
+      <span class="material-icons-outlined">search_off</span>
+      No plants match "<strong>${q}</strong>"
+    </div>`;
+  } else {
+    dd.innerHTML = matches.map(p=>{
+      const thumb = p.photo
+        ? `<div class="search-result-thumb" style="background-image:url('${p.photo}')"></div>`
+        : `<div class="search-result-thumb"><span class="material-icons-outlined">local_florist</span></div>`;
+      const urgent = !p.watered && p.waterIn <= 2;
+      const badge = p.watered
+        ? `<span class="badge badge-done" style="font-size:11px"><span class="material-icons-outlined">check_circle</span>Watered</span>`
+        : urgent
+          ? `<span class="badge badge-warn" style="font-size:11px"><span class="material-icons-outlined">water_drop</span>${p.waterIn}d</span>`
+          : `<span class="badge badge-water" style="font-size:11px"><span class="material-icons-outlined">water_drop</span>${p.waterIn}d</span>`;
+      return `<div class="search-result-item" onclick="openDetail(${p.id});closeSearchDropdown()">
+        ${thumb}
+        <div style="flex:1;min-width:0">
+          <div class="search-result-name">${highlight(p.name,q)}</div>
+          <div class="search-result-meta">${p.location} · ${p.species||''}</div>
+        </div>
+        <div class="search-result-badge">${badge}</div>
+      </div>`;
+    }).join('');
+  }
+  dd.classList.add('open');
+}
+
+function highlight(text, q){
+  if(!q) return text;
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if(idx<0) return text;
+  return text.slice(0,idx)
+    + `<mark style="background:rgba(122,158,126,.25);border-radius:3px;padding:0 2px">${text.slice(idx,idx+q.length)}</mark>`
+    + text.slice(idx+q.length);
+}
+
+function closeSearchDropdown(){
+  document.getElementById('search-dropdown').classList.remove('open');
+}
+
+function clearSearch(){
+  document.getElementById('plant-search-input').value='';
+  document.getElementById('search-clear-btn').classList.remove('visible');
+  closeSearchDropdown();
+  renderCards('');
+}
+
+function searchKeyNav(e){
+  if(e.key==='Escape'){ clearSearch(); document.getElementById('plant-search-input').blur(); }
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e=>{
+  const wrap = document.getElementById('search-bar-wrap');
+  if(wrap && !wrap.contains(e.target)) closeSearchDropdown();
+});
+
+// Legacy hook (used by old filterPlants calls inside tasks modal etc.)
+function filterPlants(q){ renderCards(q); }
+function debouncedFilter(q){ handleSearchInput(q); }
+
+// ── PHOTO UPLOAD HANDLERS (Fix 2) ───────────────────────
+function handleAddPhotoFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    document.getElementById('add-photo').value = data;
+    document.getElementById('add-photo-url').value = '';
+    const img = document.getElementById('add-photo-img');
+    img.style.backgroundImage = `url('${data}')`;
+    img.style.display = 'block';
+    document.getElementById('add-photo-icon').style.display = 'none';
+    document.getElementById('add-photo-label').style.display = 'none';
+    const ov = document.getElementById('add-photo-overlay');
+    ov.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+function handleAddPhotoUrl(url){
+  document.getElementById('add-photo').value = url;
+  const img = document.getElementById('add-photo-img');
+  if(url){
+    img.style.backgroundImage = `url('${url}')`;
+    img.style.display = 'block';
+    document.getElementById('add-photo-icon').style.display = 'none';
+    document.getElementById('add-photo-label').style.display = 'none';
+    document.getElementById('add-photo-overlay').style.display = 'flex';
+  } else {
+    img.style.display = 'none';
+    document.getElementById('add-photo-icon').style.display = '';
+    document.getElementById('add-photo-label').style.display = '';
+    document.getElementById('add-photo-overlay').style.display = 'none';
+  }
+}
+function resetAddPhotoUI(){
+  document.getElementById('add-photo').value = '';
+  document.getElementById('add-photo-url').value = '';
+  document.getElementById('add-photo-file').value = '';
+  document.getElementById('add-photo-img').style.display = 'none';
+  document.getElementById('add-photo-icon').style.display = '';
+  document.getElementById('add-photo-label').style.display = '';
+  document.getElementById('add-photo-overlay').style.display = 'none';
+}
+function handleEditPhotoFile(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const data = ev.target.result;
+    document.getElementById('edit-photo').value = data;
+    document.getElementById('edit-photo-url').value = '';
+    const img = document.getElementById('edit-photo-img');
+    img.style.backgroundImage = `url('${data}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+function handleEditPhotoUrl(url){
+  document.getElementById('edit-photo').value = url;
+  const img = document.getElementById('edit-photo-img');
+  if(url){
+    img.style.backgroundImage = `url('${url}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+  } else {
+    img.style.display = 'none';
+    document.getElementById('edit-photo-icon').style.display = '';
+    document.getElementById('edit-photo-label').style.display = '';
+    document.getElementById('edit-photo-overlay').style.display = 'none';
+  }
+}
+function populateEditPhotoUI(photoVal){
+  const img = document.getElementById('edit-photo-img');
+  if(photoVal){
+    img.style.backgroundImage = `url('${photoVal}')`;
+    img.style.display = 'block';
+    document.getElementById('edit-photo-icon').style.display = 'none';
+    document.getElementById('edit-photo-label').style.display = 'none';
+    document.getElementById('edit-photo-overlay').style.display = 'flex';
+    // Show URL only if it looks like a URL (not base64)
+    document.getElementById('edit-photo-url').value = photoVal.startsWith('data:') ? '' : photoVal;
+  } else {
+    img.style.display = 'none';
+    document.getElementById('edit-photo-icon').style.display = '';
+    document.getElementById('edit-photo-label').style.display = '';
+    document.getElementById('edit-photo-overlay').style.display = 'none';
+    document.getElementById('edit-photo-url').value = '';
+  }
+}
+
+// ── WEATHER — GPS + Open-Meteo (Fix 4) ──────────────────
+const WMO_CODES = {
+  0:{icon:'☀️',desc:'Clear sky'},1:{icon:'🌤️',desc:'Mainly clear'},
+  2:{icon:'⛅',desc:'Partly cloudy'},3:{icon:'☁️',desc:'Overcast'},
+  45:{icon:'🌫️',desc:'Foggy'},48:{icon:'🌫️',desc:'Icy fog'},
+  51:{icon:'🌦️',desc:'Light drizzle'},53:{icon:'🌦️',desc:'Drizzle'},
+  55:{icon:'🌧️',desc:'Heavy drizzle'},61:{icon:'🌧️',desc:'Light rain'},
+  63:{icon:'🌧️',desc:'Rain'},65:{icon:'🌧️',desc:'Heavy rain'},
+  71:{icon:'🌨️',desc:'Light snow'},73:{icon:'🌨️',desc:'Snow'},
+  75:{icon:'❄️',desc:'Heavy snow'},80:{icon:'🌦️',desc:'Rain showers'},
+  81:{icon:'🌧️',desc:'Heavy showers'},95:{icon:'⛈️',desc:'Thunderstorm'},
+  99:{icon:'⛈️',desc:'Heavy thunderstorm'}
+};
+
+function plantTipFromWeather(code, temp){
+  if(code===0||code===1) return temp>28?'Hot & sunny — check soil moisture twice today!':'Great day to move sun-lovers near the window!';
+  if(code===2||code===3) return 'Overcast today — low-light plants will love this.';
+  if(code>=51&&code<=65||code>=80&&code<=82) return 'Rainy day — hold off on watering, humidity is high!';
+  if(code>=71&&code<=75) return 'Cold & snowy — keep tropical plants away from windows.';
+  if(code>=95) return 'Stormy outside — a good day to mist your indoor plants.';
+  return 'Good conditions for your indoor plants today!';
+}
+
+function setWeatherFallback(){
+  document.getElementById('w-icon').textContent='🌿';
+  document.getElementById('w-temp').textContent='--°C';
+  document.getElementById('w-desc').textContent='Weather unavailable';
+  document.getElementById('w-tip').textContent='Enable location access for live weather tips.';
+}
+
+async function fetchWeather(lat, lon, cityName){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weathercode&temperature_unit=celsius&timezone=auto`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const temp = Math.round(data.current.temperature_2m);
+    const code = data.current.weathercode;
+    const wmo = WMO_CODES[code] || {icon:'🌡️',desc:'Unknown'};
+    document.getElementById('w-icon').textContent = wmo.icon;
+    document.getElementById('w-temp').textContent = `${temp}°C`;
+    document.getElementById('w-desc').textContent = `${wmo.desc} · ${cityName}`;
+    document.getElementById('w-tip').textContent = plantTipFromWeather(code, temp);
+  } catch(err){
+    setWeatherFallback();
+  }
+}
+
+async function reverseGeocode(lat, lon){
+  try{
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+    const data = await res.json();
+    return data.address.city || data.address.town || data.address.village || data.address.county || 'Your Location';
+  } catch(e){
+    return 'Your Location';
+  }
+}
+
+function setWeather(){
+  document.getElementById('w-icon').textContent='🔍';
+  document.getElementById('w-temp').textContent='...';
+  document.getElementById('w-desc').textContent='Detecting location…';
+  document.getElementById('w-tip').textContent='Fetching live weather for your plants…';
+
+  if(!navigator.geolocation){
+    setWeatherFallback();
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const {latitude:lat, longitude:lon} = pos.coords;
+      const city = await reverseGeocode(lat, lon);
+      await fetchWeather(lat, lon, city);
+    },
+    _err => {
+      // Permission denied or unavailable — silently fall back
+      setWeatherFallback();
+    },
+    { timeout: 8000, maximumAge: 600000 }
+  );
+}
+
+// ── LOCALSTORAGE PERSISTENCE ─────────────────────────────
+const STORAGE_PLANTS  = 'plantcare_plants_v1';
+const STORAGE_PROFILE = 'plantcare_profile_v1';
+const STORAGE_DATE    = 'plantcare_lastdate_v1';
+
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_PLANTS,  JSON.stringify(plants));
+    localStorage.setItem(STORAGE_PROFILE, JSON.stringify(profile));
+  } catch(e){ console.warn('Could not save to localStorage',e); }
+}
+
+function loadData(){
+  try{
+    const sp = localStorage.getItem(STORAGE_PLANTS);
+    const sr = localStorage.getItem(STORAGE_PROFILE);
+    if(sp) plants  = JSON.parse(sp);
+    if(sr) Object.assign(profile, JSON.parse(sr));
+  } catch(e){ console.warn('Could not load from localStorage',e); }
+}
+
+// Each new day, reset watered flags and tick down waterIn/fertIn
+function tickDays(){
+  const today = new Date().toDateString();
+  const last  = localStorage.getItem(STORAGE_DATE);
+  if(last === today) return;           // same day — nothing to tick
+  const days = last
+    ? Math.round((new Date(today)-new Date(last))/(1000*60*60*24))
+    : 0;
+  if(days > 0){
+    plants.forEach(p=>{
+      p.watered  = false;
+      p.waterIn  = Math.max(1, p.waterIn  - days);
+      p.fertIn   = Math.max(1, p.fertIn   - days);
+      // small health decay if overdue on water
+      if(p.waterIn <= 1 && !p.watered) p.health = Math.max(10, p.health - 5);
+    });
+  }
+  localStorage.setItem(STORAGE_DATE, today);
+  saveData();
+}
+
+// Patch every mutating function to auto-save ──────────────
+const _waterPlant = waterPlant;
+waterPlant = function(id,e){
+  _waterPlant(id,e);
+  saveData();
+};
+
+const _waterAll = waterAll;
+waterAll = function(){
+  _waterAll();
+  saveData();
+};
+
+const _confirmMove = confirmMove;
+confirmMove = function(){
+  _confirmMove();
+  saveData();
+};
+
+const _addPlant = addPlant;
+addPlant = function(){
+  _addPlant();
+  saveData();
+};
+
+const _deletePlant = deletePlant;
+deletePlant = function(id){
+  _deletePlant(id);
+  saveData();
+};
+
+const _saveEdit = saveEdit;
+saveEdit = function(){
+  _saveEdit();
+  saveData();
+};
+
+const _saveProfile = saveProfile;
+saveProfile = function(){
+  _saveProfile();
+  saveData();
+};
+
+// ── RESET BUTTON ──────────────────────────────────────────
+function resetAllData(){
+  if(!confirm('⚠️ This will delete ALL your plants and settings and reset to defaults. Are you sure?')) return;
+  localStorage.removeItem(STORAGE_PLANTS);
+  localStorage.removeItem(STORAGE_PROFILE);
+  localStorage.removeItem(STORAGE_DATE);
+  localStorage.removeItem('plantcare_streak_v1');
+  location.reload();
+}
+
+// ── STREAK SYSTEM ──────────────────────────────────────────
+const STORAGE_STREAK = 'plantcare_streak_v1';
+function loadStreak(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_STREAK))||{count:0,lastDate:'',history:[]}; }
+  catch(e){ return {count:0,lastDate:'',history:[]}; }
+}
+function saveStreak(s){ localStorage.setItem(STORAGE_STREAK,JSON.stringify(s)); }
+
+function checkAndUpdateStreak(){
+  const today = new Date().toDateString();
+  const s = loadStreak();
+  const allWatered = plants.length>0 && plants.every(p=>p.watered);
+  if(allWatered && s.lastDate!==today){
+    const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
+    s.count = s.lastDate===yesterday.toDateString() ? s.count+1 : 1;
+    s.lastDate = today;
+    s.history = [...(s.history||[]).slice(-6), today];
+    saveStreak(s);
+  }
+  renderStreak(s);
+}
+
+function renderStreak(s){
+  document.getElementById('streak-num').textContent = s.count;
+  document.getElementById('streak-label').textContent =
+    s.count===0?'Water all plants to start!':
+    s.count===1?'Great start — keep going!':
+    s.count<7 ?`${s.count} days strong! 🌱`:`${s.count} days — you're a plant whisperer! 🌿`;
+  const dotsEl=document.getElementById('streak-dots');
+  dotsEl.innerHTML='';
+  const today=new Date().toDateString();
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.toDateString();
+    const dot=document.createElement('div');
+    dot.className='streak-dot';
+    const hit=(s.history||[]).includes(ds);
+    if(ds===today&&hit) dot.classList.add('today');
+    else if(hit) dot.classList.add('done');
+    dot.title=d.toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'});
+    dot.textContent=hit?'✓':'';
+    dotsEl.appendChild(dot);
+  }
+}
+
+// ── DAILY QUOTE (365, rotates by day of year) ─────────────
+const QUOTES=[
+"The earth laughs in flowers. — Ralph Waldo Emerson",
+"In every walk with nature, one receives far more than he seeks. — John Muir",
+"To plant a garden is to believe in tomorrow. — Audrey Hepburn",
+"A garden is a grand teacher. — Gertrude Jekyll",
+"Look deep into nature, and then you will understand everything better. — Albert Einstein",
+"The love of gardening is a seed once sown that never dies. — Gertrude Jekyll",
+"He who plants a tree plants a hope. — Lucy Larcom",
+"Keep your face to the sunshine and you cannot see the shadow. — Helen Keller",
+"Adopt the pace of nature: her secret is patience. — Ralph Waldo Emerson",
+"Nature does not hurry, yet everything is accomplished. — Lao Tzu",
+"One touch of nature makes the whole world kin. — William Shakespeare",
+"Life begins the day you start a garden. — Chinese Proverb",
+"A garden requires patient labor and attention. — Liberty Hyde Bailey",
+"The glory of gardening: hands in the dirt, head in the sun. — Alfred Austin",
+"Gardening is the art that uses flowers and plants as paint. — Geoffrey B. Charlesworth",
+"To forget how to dig the earth and to tend the soil is to forget ourselves. — Gandhi",
+"A weed is but an unloved flower. — Ella Wheeler Wilcox",
+"The best time to plant a tree was twenty years ago. The second best time is now. — Chinese Proverb",
+"The purpose of life is to live it, to taste experience to the utmost. — Eleanor Roosevelt",
+"Life is what happens when you're busy making other plans. — John Lennon",
+"Spread love everywhere you go. — Mother Teresa",
+"Always remember that you are absolutely unique. — Margaret Mead",
+"Don't judge each day by the harvest you reap. — Robert Louis Stevenson",
+"The future belongs to those who believe in the beauty of their dreams. — Eleanor Roosevelt",
+"Do not let what you cannot do interfere with what you can do. — John Wooden",
+"The only way to do great work is to love what you do. — Steve Jobs",
+"In the middle of every difficulty lies opportunity. — Albert Einstein",
+"It always seems impossible until it's done. — Nelson Mandela",
+"What we plant in the soil of contemplation, we shall reap in the harvest of action. — Meister Eckhart",
+"Joy is not in things; it is in us. — Richard Wagner",
+"The secret of getting ahead is getting started. — Mark Twain",
+"Act as if what you do makes a difference. It does. — William James",
+"Try to be a rainbow in someone's cloud. — Maya Angelou",
+"You are never too old to set another goal or to dream a new dream. — C.S. Lewis",
+"Turn your wounds into wisdom. — Oprah Winfrey",
+"Strength does not come from physical capacity. It comes from an indomitable will. — Gandhi",
+"Alone we can do so little; together we can do so much. — Helen Keller",
+"Be yourself; everyone else is already taken. — Oscar Wilde",
+"In three words I can sum up everything I've learned about life: it goes on. — Robert Frost",
+"To keep the body in good health is a duty. — Buddha",
+"You take your life in your own hands, and what happens? A terrible thing, no one to blame. — Erica Jong",
+"Do not wait to strike till the iron is hot; but make it hot by striking. — William Butler Yeats",
+"Whether you think you can or think you can't, you're right. — Henry Ford",
+"A person who never made a mistake never tried anything new. — Albert Einstein",
+"It is our choices that show what we truly are, far more than our abilities. — J.K. Rowling",
+"Don't let yesterday take up too much of today. — Will Rogers",
+"You can't use up creativity. The more you use, the more you have. — Maya Angelou",
+"I have not failed. I've just found 10,000 ways that won't work. — Thomas A. Edison",
+"Always do your best. What you plant now, you will harvest later. — Og Mandino",
+"It is not the mountain we conquer, but ourselves. — Sir Edmund Hillary",
+"You must be the change you wish to see in the world. — Gandhi",
+"An unexamined life is not worth living. — Socrates",
+"Magic is believing in yourself. — Johann Wolfgang von Goethe",
+"The key is to keep company only with people who uplift you. — Epictetus",
+"Small steps in the right direction can turn out to be the biggest step of your life.",
+"We can't help everyone, but everyone can help someone. — Ronald Reagan",
+"Remember that not getting what you want is sometimes a wonderful stroke of luck. — Dalai Lama",
+"I can't change the direction of the wind, but I can adjust my sails. — Jimmy Dean",
+"Success usually comes to those who are too busy to be looking for it. — Henry David Thoreau",
+"I never dreamed about success, I worked for it. — Estée Lauder",
+"Don't watch the clock; do what it does. Keep going. — Sam Levenson",
+"The only limit to our realization of tomorrow will be our doubts of today. — Franklin D. Roosevelt",
+"The past cannot be changed. The future is yet in your power.",
+"If not us, who? If not now, when? — John F. Kennedy",
+"One way to keep momentum going is to have constantly greater goals. — Michael Korda",
+"Try not to become a person of success. Rather become a person of value. — Albert Einstein",
+"Only those who dare to fail greatly can ever achieve greatly. — Robert F. Kennedy",
+"We are what we repeatedly do. Excellence is not an act but a habit. — Aristotle",
+"You don't have to be great to start, but you have to start to be great. — Zig Ziglar",
+"If there is no struggle, there is no progress. — Frederick Douglass",
+"In order to succeed, your desire for success should be greater than your fear of failure. — Bill Cosby",
+"The difference between winning and losing is most often not quitting. — Walt Disney",
+"Stop chasing the money and start chasing the passion. — Tony Hsieh",
+"Dwell on the beauty of life. Watch the stars, and see yourself running with them. — Marcus Aurelius",
+"All our dreams can come true, if we have the courage to pursue them. — Walt Disney",
+"Everything you've ever wanted is on the other side of fear. — George Addair",
+"Success is walking from failure to failure with no loss of enthusiasm. — Winston Churchill",
+"What you get by achieving your goals is not as important as what you become. — Zig Ziglar",
+"Work hard, be kind, and amazing things will happen. — Conan O'Brien",
+"Do not be embarrassed by your failures, learn from them and start again. — Richard Branson",
+"I am not a product of my circumstances. I am a product of my decisions. — Stephen Covey",
+"Once you choose hope, anything's possible. — Christopher Reeve",
+"The best preparation for tomorrow is doing your best today. — H. Jackson Brown Jr.",
+"Opportunities don't happen. You create them. — Chris Grosser",
+"It's not whether you get knocked down; it's whether you get up. — Vince Lombardi",
+"Problems are not stop signs, they are guidelines. — Robert H. Schuller",
+"Everything has beauty, but not everyone sees it. — Confucius",
+"Do what you can, with what you have, where you are. — Theodore Roosevelt",
+"Well done is better than well said. — Benjamin Franklin",
+"Gardening is an instrument of grace. — May Sarton",
+"Every flower that blooms has had to push through a lot of dirt.",
+"There are no gardening mistakes, only experiments. — Janet Kilburn Phillips",
+"Plants give us oxygen for the lungs and for the soul. — Linda Solegato",
+"To nurture a plant is to nurture yourself.",
+"Every garden tells a story. What's yours saying today?",
+"Caring for plants teaches patience — one of life's greatest skills.",
+"Water your own garden before helping others with theirs.",
+"Life, like a garden, needs both sun and rain to flourish.",
+"Be like a plant: face the light, bend but don't break, and keep growing.",
+"Little by little, a little becomes a lot. — Tanzanian Proverb",
+"The work you put in today blooms tomorrow.",
+"Tend your inner garden as lovingly as your outer one.",
+"When you take care of something living, you are practicing love.",
+"Your plants don't judge you. They just need you. That's enough.",
+"Not every day will be sunny. Water your roots on cloudy days too.",
+"Growth is a process, not an event. Trust it.",
+"You are doing better than you think. Keep growing.",
+"Even the slowest-growing plant eventually blossoms.",
+"A little attention every day creates something extraordinary over time.",
+"The art of being happy lies in the power of extracting happiness from common things. — Henry Ward Beecher",
+"Enjoy the little things, for one day you may look back and realize they were the big things. — Robert Brault",
+"Every day may not be good, but there is something good in every day. — Alice Morse Earle",
+"The present moment is the only moment available to us. — Thich Nhat Hanh",
+"Breathe. It's just a bad day, not a bad life.",
+"You deserve to take up space. You deserve to bloom.",
+"Be gentle with yourself. You are a child of the universe. — Max Ehrmann",
+"Start where you are. Use what you have. Do what you can. — Arthur Ashe",
+"Sometimes the smallest step in the right direction ends up being the biggest step of your life.",
+"You are enough. You have always been enough.",
+"Progress, not perfection, is the goal.",
+"The comeback is always stronger than the setback.",
+"Difficult roads often lead to beautiful destinations.",
+"Don't count the days, make the days count. — Muhammad Ali",
+"You were given this life because you are strong enough to live it.",
+"New beginnings are disguised as painful endings. — Lao Tzu",
+"The flower that blooms in adversity is the rarest and most beautiful of all. — Walt Disney",
+"Your only limit is your mind.",
+"Believe in your infinite potential. — Roy T. Bennett",
+"You are braver than you believe, stronger than you seem. — A.A. Milne",
+"Don't stop until you're proud.",
+"Great things never come from comfort zones.",
+"Sometimes later becomes never. Do it now.",
+"Great things take time. Be patient.",
+"Life is tough, but so are you.",
+"Dream big, work hard, stay focused, and surround yourself with good people.",
+"Success doesn't just find you. You have to go out and get it.",
+"The harder you work for something, the greater you'll feel when you achieve it.",
+"Don't give up now. Difficulties strengthen the mind. — Seneca",
+"You are one decision away from a completely different life.",
+"Make today so awesome that yesterday gets jealous.",
+"Strive not to be a success, but rather to be of value. — Albert Einstein",
+"Two roads diverged in a wood, and I took the one less traveled by. — Robert Frost",
+"When everything seems to be going against you, remember that the airplane takes off against the wind. — Henry Ford",
+"The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty. — Winston Churchill",
+"What we achieve inwardly will change outer reality. — Plutarch",
+"No act of kindness, no matter how small, is ever wasted. — Aesop",
+"How wonderful it is that nobody need wait a single moment before starting to improve the world. — Anne Frank",
+"Sometimes you will never know the value of a moment until it becomes a memory. — Dr. Seuss",
+"Give every day the chance to become the most beautiful day of your life. — Mark Twain",
+"If you get tired, learn to rest, not to quit. — Banksy",
+"Keep going. Everything you need will come to you at the perfect time.",
+"Fall seven times, stand up eight. — Japanese Proverb",
+"Nothing is particularly hard if you divide it into small jobs. — Henry Ford",
+"It's kind of fun to do the impossible. — Walt Disney",
+"You become what you believe. — Oprah Winfrey",
+"Storms make trees take deeper roots. — Dolly Parton",
+"A smooth sea never made a skilled sailor. — Franklin D. Roosevelt",
+"Every day is a second chance.",
+"Darkness cannot drive out darkness: only light can do that. — Martin Luther King Jr.",
+"The only journey is the one within. — Rainer Maria Rilke",
+"Wherever you go, go with all your heart. — Confucius",
+"Happiness often sneaks in through a door you didn't know you left open. — John Barrymore",
+"If you want others to be happy, practice compassion. If you want to be happy, practice compassion. — Dalai Lama",
+"The most wasted of days is one without laughter. — E.E. Cummings",
+"If you're reading this, you're still here. That matters.",
+"Take it one breath at a time. You're doing great.",
+"Water your plants and water your soul today.",
+"Let today be the beginning of something wonderful.",
+"You are exactly where you need to be.",
+"The garden is always waiting for you. So is tomorrow. 🌿",
+"Do not go where the path may lead; go instead where there is no path. — Ralph Waldo Emerson",
+"Character is how you treat those who can do nothing for you.",
+"Wherever you are, be all there. — Jim Elliot",
+"The secret of change is to focus all of your energy not on fighting the old, but on building the new. — Socrates",
+"We do not remember days, we remember moments. — Cesare Pavese",
+"Life is either a daring adventure or nothing at all. — Helen Keller",
+"The more that you read, the more things you will know. — Dr. Seuss",
+"You have to be odd to be number one. — Dr. Seuss",
+"You'll never find a rainbow if you're looking down. — Charlie Chaplin",
+"In the middle of difficulty lies opportunity. — Albert Einstein",
+"It is never too late to be what you might have been. — George Eliot",
+"Life is not measured by the number of breaths we take, but by the moments that take our breath away.",
+"If you want to lift yourself up, lift up someone else. — Booker T. Washington",
+"When the world says 'Give up,' hope whispers 'Try it one more time.'",
+"The secret to getting ahead is getting started. — Mark Twain",
+"Every strike brings me closer to the next home run. — Babe Ruth",
+"People often say that motivation doesn't last. Well, neither does bathing — that's why we recommend it daily. — Zig Ziglar",
+"Life is 10% what happens to us and 90% how we react to it. — Charles R. Swindoll",
+"Persistence guarantees that results are inevitable. — Paramahansa Yogananda",
+"Change your thoughts and you change your world. — Norman Vincent Peale",
+"When you feel like giving up, remember why you started.",
+"The man who has confidence in himself gains the confidence of others. — Hasidic Proverb",
+"The most common form of despair is not being who you are. — Søren Kierkegaard",
+"Your time is limited, so don't waste it living someone else's life. — Steve Jobs",
+"Live as if you were to die tomorrow. Learn as if you were to live forever. — Gandhi",
+"Go confidently in the direction of your dreams! Live the life you've imagined. — Henry David Thoreau",
+"When I let go of what I am, I become what I might be. — Lao Tzu",
+"I am thankful for all of those who said 'No' to me. It's because of them I'm doing it myself. — Albert Einstein",
+"It is a rough road that leads to the heights of greatness. — Seneca",
+"The starting point of all achievement is desire. — Napoleon Hill",
+"Success is the sum of small efforts, repeated day in and day out. — Robert Collier",
+"If you genuinely want something, don't wait for it — teach yourself to be impatient.",
+"Don't let the fear of losing be greater than the excitement of winning. — Robert Kiyosaki",
+"You've got to get up every morning with determination if you're going to go to bed with satisfaction. — George Lorimer",
+"What seems to us as bitter trials are often blessings in disguise. — Oscar Wilde",
+"The truth is that our finest moments are most likely to occur when we are feeling deeply uncomfortable. — M. Scott Peck",
+"Only those who dare to fail greatly can ever achieve greatly. — Robert F. Kennedy",
+"As we look ahead, leaders will be those who empower others. — Bill Gates",
+"If you're not stubborn, you'll give up on experiments too soon. — Jeff Bezos",
+"Without hustle, talent will only carry you so far. — Gary Vaynerchuk",
+"Would you like a formula for success? Double your rate of failure. — Thomas J. Watson",
+"One of the lessons I grew up with: always stay true to yourself. — Michelle Obama",
+"To be the best, you must be able to handle the worst.",
+"In order to succeed, your desire for success should be greater than your fear of failure. — Bill Cosby",
+"Stop chasing what your mind wants and start chasing what your soul needs.",
+"Take care of your body. It's the only place you have to live. — Jim Rohn",
+"Happiness is not something readymade. It comes from your own actions. — Dalai Lama",
+"Success is not how high you have climbed, but how you make a positive difference to the world. — Roy T. Bennett",
+"The greatest weapon against stress is our ability to choose one thought over another. — William James",
+"Keep your eyes on the stars and your feet on the ground. — Theodore Roosevelt",
+"It's not about having time. It's about making time.",
+"Today is a great day to learn something new.",
+"Kindness is free. Sprinkle that stuff everywhere.",
+"Every morning is a chance at a new day.",
+"You grow through what you go through.",
+"Behind every beautiful thing, there's been some kind of pain. — Bob Dylan",
+"Even after all this time the sun never says to the earth, 'You owe me.' — Hafiz",
+"Those who contemplate the beauty of the earth find reserves of strength that will endure. — Rachel Carson",
+"The earth has music for those who listen. — George Santayana",
+"In all things of nature there is something of the marvelous. — Aristotle",
+"Nature is not a place to visit. It is home. — Gary Snyder",
+"The poetry of the earth is never dead. — John Keats",
+"Study nature, love nature, stay close to nature. — Frank Lloyd Wright",
+"If you have a garden and a library, you have everything you need. — Cicero",
+"What is a weed? A plant whose virtues have not yet been discovered. — Ralph Waldo Emerson",
+"A flower does not think of competing with the flower next to it. It just blooms.",
+"Trees are poems that the earth writes upon the sky. — Kahlil Gibran",
+"The best gardener is nature itself.",
+"A morning garden is the best therapist you'll ever find.",
+"Let the rain wash away yesterday. Let the sun dry today. Let the garden grow tomorrow.",
+];
+
+function renderDailyQuote(){
+  const start=new Date('2025-01-01');
+  const now=new Date();
+  const dayOfYear=Math.floor((now-start)/(1000*60*60*24));
+  const idx=((dayOfYear%QUOTES.length)+QUOTES.length)%QUOTES.length;
+  const full=QUOTES[idx];
+  const dashIdx=full.lastIndexOf(' — ');
+  const text=dashIdx>0?full.slice(0,dashIdx):full;
+  const author=dashIdx>0?full.slice(dashIdx+3):'';
+  const dayNum=(dayOfYear%365)+1;
+  document.getElementById('quote-text').textContent=`"${text}"`;
+  document.getElementById('quote-author').textContent=author?`— ${author}`:'';
+  document.getElementById('quote-day-label').textContent=`Day ${dayNum} of 365`;
+}
+
+// ── IMAGE CROP SYSTEM ──────────────────────────────────────
+let _cropCallback=null;
+let _cropState={scale:1,minScale:.2,maxScale:5,x:0,y:0,dragging:false,startX:0,startY:0,lastX:0,lastY:0};
+
+function openCrop(dataUrl,callback){
+  _cropCallback=callback;
+  const img=document.getElementById('crop-img');
+  const container=document.getElementById('crop-container');
+  img.onload=()=>{
+    const cw=container.clientWidth,ch=container.clientHeight;
+    const scaleW=cw/img.naturalWidth,scaleH=ch/img.naturalHeight;
+    _cropState.scale=Math.max(scaleW,scaleH);
+    _cropState.minScale=Math.min(scaleW,scaleH)*.5;
+    _cropState.x=(cw-img.naturalWidth*_cropState.scale)/2;
+    _cropState.y=(ch-img.naturalHeight*_cropState.scale)/2;
+    applyCropTransform();
+  };
+  img.src=dataUrl;
+  document.getElementById('crop-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  setupCropListeners();
+}
+function closeCrop(){
+  document.getElementById('crop-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function applyCropTransform(){
+  const img=document.getElementById('crop-img');
+  img.style.transform=`translate(${_cropState.x}px,${_cropState.y}px) scale(${_cropState.scale})`;
+  img.style.transformOrigin='0 0';
+}
+function confirmCrop(){
+  const img=document.getElementById('crop-img');
+  const container=document.getElementById('crop-container');
+  const cw=container.clientWidth,ch=container.clientHeight;
+  const canvas=document.createElement('canvas');
+  canvas.width=cw*2;canvas.height=ch*2;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(2,2);
+  ctx.drawImage(img,_cropState.x,_cropState.y,img.naturalWidth*_cropState.scale,img.naturalHeight*_cropState.scale);
+  const dataUrl=canvas.toDataURL('image/jpeg',.9);
+  closeCrop();
+  if(_cropCallback) _cropCallback(dataUrl);
+}
+function _onCropMouseDown(e){
+  _cropState.dragging=true;
+  _cropState.startX=(e.touches?e.touches[0].clientX:e.clientX);
+  _cropState.startY=(e.touches?e.touches[0].clientY:e.clientY);
+  _cropState.lastX=_cropState.x;_cropState.lastY=_cropState.y;
+  e.preventDefault();
+}
+function _onCropMouseMove(e){
+  if(!_cropState.dragging)return;
+  const cx=e.touches?e.touches[0].clientX:e.clientX;
+  const cy=e.touches?e.touches[0].clientY:e.clientY;
+  _cropState.x=_cropState.lastX+(cx-_cropState.startX);
+  _cropState.y=_cropState.lastY+(cy-_cropState.startY);
+  applyCropTransform();
+}
+function _onCropMouseUp(){_cropState.dragging=false;}
+function _onCropWheel(e){
+  e.preventDefault();
+  const delta=e.deltaY>0?.9:1.1;
+  const newScale=Math.min(_cropState.maxScale,Math.max(_cropState.minScale,_cropState.scale*delta));
+  const container=document.getElementById('crop-container');
+  const rect=container.getBoundingClientRect();
+  const cx=e.clientX-rect.left,cy=e.clientY-rect.top;
+  _cropState.x=cx-(cx-_cropState.x)*(newScale/_cropState.scale);
+  _cropState.y=cy-(cy-_cropState.y)*(newScale/_cropState.scale);
+  _cropState.scale=newScale;
+  applyCropTransform();
+}
+let _cropListenersOn=false;
+function setupCropListeners(){
+  if(_cropListenersOn)return;
+  const img=document.getElementById('crop-img');
+  img.addEventListener('mousedown',_onCropMouseDown);
+  img.addEventListener('touchstart',_onCropMouseDown,{passive:false});
+  window.addEventListener('mousemove',_onCropMouseMove);
+  window.addEventListener('touchmove',_onCropMouseMove,{passive:false});
+  window.addEventListener('mouseup',_onCropMouseUp);
+  window.addEventListener('touchend',_onCropMouseUp);
+  document.getElementById('crop-container').addEventListener('wheel',_onCropWheel,{passive:false});
+  _cropListenersOn=true;
+}
+
+// Patch photo uploads to open crop first
+const _origAddPhoto=handleAddPhotoFile;
+handleAddPhotoFile=function(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>openCrop(ev.target.result,cropped=>{
+    document.getElementById('add-photo').value=cropped;
+    document.getElementById('add-photo-url').value='';
+    const i=document.getElementById('add-photo-img');
+    i.style.backgroundImage=`url('${cropped}')`;i.style.display='block';
+    document.getElementById('add-photo-icon').style.display='none';
+    document.getElementById('add-photo-label').style.display='none';
+    document.getElementById('add-photo-overlay').style.display='flex';
+  });
+  reader.readAsDataURL(file);
+};
+const _origEditPhoto=handleEditPhotoFile;
+handleEditPhotoFile=function(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>openCrop(ev.target.result,cropped=>{
+    document.getElementById('edit-photo').value=cropped;
+    document.getElementById('edit-photo-url').value='';
+    const i=document.getElementById('edit-photo-img');
+    i.style.backgroundImage=`url('${cropped}')`;i.style.display='block';
+    document.getElementById('edit-photo-icon').style.display='none';
+    document.getElementById('edit-photo-label').style.display='none';
+    document.getElementById('edit-photo-overlay').style.display='flex';
+  });
+  reader.readAsDataURL(file);
+};
+
+// Patch waterPlant to update streak
+const _wpStreak=waterPlant;
+waterPlant=function(id,e){_wpStreak(id,e);setTimeout(checkAndUpdateStreak,120);saveData();};
+
+// ── INIT ──────────────────────────────────────────────────
+loadData();
+tickDays();
+const hr=new Date().getHours();
+if(!profile.greeting||['Good morning,','Good afternoon,','Good evening,'].includes(profile.greeting)){
+  profile.greeting=hr<12?'Good morning,':hr<17?'Good afternoon,':'Good evening,';
+}
+renderDailyQuote();
+checkAndUpdateStreak();
+setWeather();
+renderAll();
+</script>
+</body>
+</html>
